@@ -2,10 +2,10 @@
 
 void UART0_Init(void)
 {
-	uint8_t osr_val = 32; //with osr value we can compensate baudrate error - for 115200 we use osr=16 for 921600 osr=11
+	uint8_t osr_val = 16; //with osr value we can compensate baudrate error - for 115200 we use osr=16, for 9600 32, for 921600 osr=11
 	uint32_t sbr_val;
 	uint32_t uart0clk = 41943040;
-	uint32_t baud_rate = 9600;
+	uint32_t baud_rate = 115200;
 	uint32_t reg_temp = 0;
 	
 	SIM->SCGC4 |= SIM_SCGC4_UART0_MASK;							//UART0 dolaczony do zegara

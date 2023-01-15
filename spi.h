@@ -15,10 +15,13 @@
 #define MISO			6
 #define SCK				0
 #define SS				5
-#define _PAR_SEL	5
 
 
 void SPI0_Init(void);
 
-uint8_t SPI0_Write(uint8_t data);
+void CS_On(void);
+void CS_Off(void);
+void LoadBufferSPI(uint16_t);
+void SPI_Write(uint8_t, char);
+void SPI0_Write(uint8_t, uint8_t);
 uint8_t SPI0_Read(void);
