@@ -67,7 +67,11 @@ int main (void) {
 	AD7606B_Init();
 	ResetDelay();
 	SPI0_Init();
-	AD7606_Set(0xAA,0xF2);
+	AD7606_Set(0x02,0x10);
+	AD7606_Set(0x03,0x00);
+	AD7606_Set(0x04,0x00);
+	AD7606_Set(0x05,0x00);
+	AD7606_Set(0x06,0x00);
 	Set_DOUT(); 
 	UART0_Init();
 	TPM0_Init();

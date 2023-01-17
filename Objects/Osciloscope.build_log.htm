@@ -28,28 +28,28 @@ Project File Date:  01/07/2023
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Rebuild target 'FRDM-KL05ZJ'
 assembling startup_MKL05Z4.s...
-compiling uart0.c...
+compiling main.c...
+defines.h(2): warning:  #1-D: last line of file ends without a newline
+  #define TRUE 1
+main.c(79): warning:  #177-D: variable "iter"  was declared but never referenced
+  	int iter = 0;
+main.c: 2 warnings, 0 errors
 compiling DMA.c...
 DMA.h(3): warning:  #1-D: last line of file ends without a newline
   void DMA_Init(void);
 DMA.c(8): warning:  #1-D: last line of file ends without a newline
   	
 DMA.c: 2 warnings, 0 errors
-compiling tpm.c...
-compiling system_MKL05Z4.c...
-compiling AD7606B.c...
 compiling spi.c...
 defines.h(2): warning:  #1-D: last line of file ends without a newline
   #define TRUE 1
 spi.c: 1 warning, 0 errors
-compiling main.c...
-defines.h(2): warning:  #1-D: last line of file ends without a newline
-  #define TRUE 1
-main.c(75): warning:  #177-D: variable "iter"  was declared but never referenced
-  	int iter = 0;
-main.c: 2 warnings, 0 errors
+compiling tpm.c...
+compiling system_MKL05Z4.c...
+compiling uart0.c...
+compiling AD7606B.c...
 linking...
-Program Size: Code=3680 RO-data=264 RW-data=132 ZI-data=452  
+Program Size: Code=3712 RO-data=264 RW-data=132 ZI-data=452  
 ".\Objects\Osciloscope.axf" - 0 Error(s), 5 Warning(s).
 
 <h2>Software Packages used:</h2>
@@ -78,7 +78,7 @@ Package Vendor: Keil
    * Component: Keil::Device:Startup:1.0.0
       Source file:   Device\Source\ARM\startup_MKL05Z4.s
       Source file:   Device\Source\system_MKL05Z4.c
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:00
 </pre>
 </body>
 </html>
