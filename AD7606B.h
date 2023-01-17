@@ -4,11 +4,11 @@
 //----------------------------------------------
 // Zródlo zegara
 //
-#define REFSEL				11
+#define REFSEL				6
 #define VDRIVE				10
 #define _PAR_SER			5
 #define BUSY					3
-#define FIRSTDATA			8
+#define CONTROL_DIODE	8
 
 #define D_OUT_A				8
 #define D_OUT_B				9
@@ -42,6 +42,7 @@ typedef union{
 } data_ex;
 
 void AD7606B_Init(void);
+void ResetDelay(void);
 void Set_DOUT(void);
 data_ex LoadBuffer(char, char);
 data_ex Extract(uint32_t);

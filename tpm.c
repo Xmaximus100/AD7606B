@@ -49,7 +49,7 @@ void TPM1_Init(void) {
   //TPM0->CONTROLS[2].CnSC |= (TPM_CnSC_MSA_MASK | TPM_CnSC_ELSA_MASK | TPM_CnSC_MSA_MASK);
 	
 	//TPM1->CONTROLS[0].CnSC |= TPM_CnSC_CHIE_MASK; 
-	//NVIC_SetPriority(TPM1_IRQn, 2);  /* TPM1 interrupt priority level  */
+	//NVIC_SetPriority(TPM1_IRQn, 0);  /* TPM1 interrupt priority level  */
 
 	//NVIC_ClearPendingIRQ(TPM1_IRQn); 
 	//NVIC_EnableIRQ(TPM1_IRQn);	/* Enable Interrupts */

@@ -12,8 +12,9 @@ void SPI0_Init(void)
 	SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;							/* clock for PORTB */
 	SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK;							/* clock for PORTA */
 	
-	//PORTA->PCR[MOSI] = PORT_PCR_MUX(ALT3);							//PTA7=MOSI
-	PORTA->PCR[MISO] = PORT_PCR_MUX(ALT3);							//PTA6=MISO
+	PORTA->PCR[MOSI] = PORT_PCR_MUX(ALT3);							//PTA7=MOSI 
+	//co ciekawe, przy uruchomionym pinie jako MOSI, nie wyzwalalo sie przerwanie wylaczajace TPM0
+	//PORTA->PCR[MISO] = PORT_PCR_MUX(ALT3);							//PTA6=MISO
 	PORTA->PCR[SS] = PORT_PCR_MUX(ALT3);							//PTA5=SS
 	//PORTA->PCR[SS] = PORT_PCR_MUX(ALT1);						//manual SS
 	//PTA->PDDR |= 1<<SS;

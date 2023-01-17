@@ -8,24 +8,29 @@ registers reg;
 
 void AD7606B_Init(void){							/* clock for PORTB */
 	SIM->SCGC5 |= (SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK); 
-	//PORTB->PCR[REFSEL] = PORT_PCR_MUX(1);		
+	PORTB->PCR[REFSEL] = PORT_PCR_MUX(1);		
 	PORTB->PCR[VDRIVE] = PORT_PCR_MUX(1);	
 	PORTB->PCR[BUSY] = PORT_PCR_MUX(1);
-	PORTA->PCR[_PAR_SER] = PORT_PCR_MUX(1);
+	PORTB->PCR[_PAR_SER] = PORT_PCR_MUX(1);
+	//PORTB->PCR[CONTROL_DIODE] = PORT_PCR_MUX(1);
 //	| PORT_PCR_PE_MASK);
 	PORTB->PCR[BUSY] |=  PORT_PCR_PE_MASK |		
 											 PORT_PCR_PS_MASK;
+	
 	//PORTA->PCR[FIRSTDATA] = PORT_PCR_MUX(1);
 	
 	PORTB->PCR[BUSY] |= 	PORT_PCR_IRQC(0xA);
 	
-	//PTB->PDDR |= 1<<REFSEL;
+	PTB->PDDR |= 1<<REFSEL;
+	PTB->PDDR |= 1<<_PAR_SER;
+	FPTB->PDDR |= 1<<CONTROL_DIODE;
 	PTB->PDDR |= 1<<VDRIVE;
 	//PTB->PDDR |= ~(1<<_PAR_SER); //is input when reset
 	PTB->PDDR &= ~(1<<BUSY); //is input when reset
 	
-	//PTB->PSOR |= 1<<REFSEL;	
-	PTB->PSOR |= 1<<VDRIVE;	//przy debugu piny pozostaja na 0
+	PTB->PSOR |= 1<<REFSEL;	
+	PTB->PSOR |= 1<<_PAR_SER;
+	PTB->PCOR |= 1<<VDRIVE;	//przy resecie pin ma wartosc ~1V
 	
 	NVIC_ClearPendingIRQ(PORTB_IRQn);				/* Clear NVIC any pending interrupts on PORTC_B */
 	NVIC_EnableIRQ(PORTB_IRQn);							/* Enable NVIC interrupts source for PORTC_B module */
@@ -34,7 +39,8 @@ void AD7606B_Init(void){							/* clock for PORTB */
 }
 
 void Set_DOUT(void){
-	PORTA->PCR[SS] = PORT_PCR_MUX(0x01);							
+	PORTA->PCR[SS] = PORT_PCR_MUX(0x01);	
+	PORTA->PCR[MOSI] = PORT_PCR_MUX(0x01);	
 	PORTB->PCR[SCK] = (PORT_PCR_MUX(0x01) | PORT_PCR_PE_MASK);	
 	//Setting up as GPIO input with pull down, unable to disactivate, line nieed to be bridged with pin B9
 	PORTB->PCR[SCK] &= ~(PORT_PCR_PS_MASK);
@@ -78,7 +84,12 @@ uint16_t SetRegister(uint8_t address, uint8_t data){
 }	
 
 //error: busy - opadajace, a pojawiaja sie dane
-
+void ResetDelay(void){
+	PTB->PSOR |= 1<<VDRIVE;
+	for(int i=0;i<1000;i++); //~170us
+	PTB->PCOR |= 1<<VDRIVE;
+	for(int i=0;i<2000;i++); //340us
+}
 
 
 
