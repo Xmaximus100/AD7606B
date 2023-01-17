@@ -7,13 +7,13 @@
 #define REFSEL				11
 #define VDRIVE				10
 #define _PAR_SER			5
-#define BUSY					13
+#define BUSY					3
 #define FIRSTDATA			8
 
-#define D_OUT_A				9
-#define D_OUT_B				10
-#define D_OUT_C				11
-#define D_OUT_D				12
+#define D_OUT_A				8
+#define D_OUT_B				9
+#define D_OUT_C				10
+#define D_OUT_D				11
 
 #define MOSI			7
 #define SCK				0

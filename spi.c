@@ -12,7 +12,7 @@ void SPI0_Init(void)
 	SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;							/* clock for PORTB */
 	SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK;							/* clock for PORTA */
 	
-	PORTA->PCR[MOSI] = PORT_PCR_MUX(ALT3);							//PTA7=MOSI
+	//PORTA->PCR[MOSI] = PORT_PCR_MUX(ALT3);							//PTA7=MOSI
 	PORTA->PCR[MISO] = PORT_PCR_MUX(ALT3);							//PTA6=MISO
 	PORTA->PCR[SS] = PORT_PCR_MUX(ALT3);							//PTA5=SS
 	//PORTA->PCR[SS] = PORT_PCR_MUX(ALT1);						//manual SS

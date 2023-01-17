@@ -8,19 +8,21 @@ registers reg;
 
 void AD7606B_Init(void){							/* clock for PORTB */
 	SIM->SCGC5 |= (SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK); 
-	//PORTB->PCR[REFSEL] = PORT_PCR_MUX(1);						
-	PORTB->PCR[VDRIVE] = PORT_PCR_MUX(1);							
+	//PORTB->PCR[REFSEL] = PORT_PCR_MUX(1);		
+	PORTB->PCR[VDRIVE] = PORT_PCR_MUX(1);	
+	PORTB->PCR[BUSY] = PORT_PCR_MUX(1);
 	PORTA->PCR[_PAR_SER] = PORT_PCR_MUX(1);
-	PORTB->PCR[BUSY] = (PORT_PCR_MUX(1) | PORT_PCR_PE_MASK);
-	PORTB->PCR[BUSY] &= ~(PORT_PCR_PS_MASK);
+//	| PORT_PCR_PE_MASK);
+	PORTB->PCR[BUSY] |=  PORT_PCR_PE_MASK |		
+											 PORT_PCR_PS_MASK;
 	//PORTA->PCR[FIRSTDATA] = PORT_PCR_MUX(1);
 	
-	PORTB->PCR[BUSY] |= PORT_PCR_IRQC(0xA);
+	PORTB->PCR[BUSY] |= 	PORT_PCR_IRQC(0xA);
 	
 	//PTB->PDDR |= 1<<REFSEL;
 	PTB->PDDR |= 1<<VDRIVE;
-	//PTB->PDDR |= 0<<_PAR_SER; //is input when reset
-	//PTA->PDDR |= 0<<BUSY; //is input when reset
+	//PTB->PDDR |= ~(1<<_PAR_SER); //is input when reset
+	PTB->PDDR &= ~(1<<BUSY); //is input when reset
 	
 	//PTB->PSOR |= 1<<REFSEL;	
 	PTB->PSOR |= 1<<VDRIVE;	//przy debugu piny pozostaja na 0
@@ -33,9 +35,9 @@ void AD7606B_Init(void){							/* clock for PORTB */
 
 void Set_DOUT(void){
 	PORTA->PCR[SS] = PORT_PCR_MUX(0x01);							
-	PORTA->PCR[SCK] = (PORT_PCR_MUX(0x01) | PORT_PCR_PE_MASK);	
+	PORTB->PCR[SCK] = (PORT_PCR_MUX(0x01) | PORT_PCR_PE_MASK);	
 	//Setting up as GPIO input with pull down, unable to disactivate, line nieed to be bridged with pin B9
-	PORTA->PCR[SCK] &= ~(PORT_PCR_PS_MASK);
+	PORTB->PCR[SCK] &= ~(PORT_PCR_PS_MASK);
 	PORTA->PCR[D_OUT_A] = (PORT_PCR_MUX(0x01) | PORT_PCR_PE_MASK);
 	PORTA->PCR[D_OUT_A] &= ~(PORT_PCR_PS_MASK);
 	PORTA->PCR[D_OUT_B] = (PORT_PCR_MUX(0x01) | PORT_PCR_PE_MASK);
@@ -44,6 +46,8 @@ void Set_DOUT(void){
 	PORTA->PCR[D_OUT_C] &= ~(PORT_PCR_PS_MASK);
 	PORTA->PCR[D_OUT_D] = (PORT_PCR_MUX(0x01) | PORT_PCR_PE_MASK);
 	PORTA->PCR[D_OUT_D] &= ~(PORT_PCR_PS_MASK);
+	
+	PTA->PDDR |= 1<<SS;
 }
 
 data_ex LoadBuffer(char data, char block){

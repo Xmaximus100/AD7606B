@@ -67,14 +67,14 @@ int main (void) {
 	AD7606B_Init();
 	SPI0_Init();
 	AD7606_Set(0xAA,0xF2);
-	Set_DOUT(); //przy debugu wywala komunikacje "Could not stop Cortex-M device"
+	Set_DOUT(); 
 	UART0_Init();
 	TPM0_Init();
+	TPM1_Init();
 	//write_data = SPI0_Write(0xAA);
 	//SPI0->M = write_data;
 	int iter = 0;
 	while(1) {
-		
 		//write_data = SPI0_Write(0xFF); //gdy tu byla ustawiona i++ to ramka tworzyla sie w nast konfiguracji [i][0x00//albo inne wewnatrz fkcji][i+1]
 		
 		//jednak przy konkretnej wartosci jest ona kopiowana na koniec, np. [0xFF][0x00][0xFF]
@@ -104,7 +104,7 @@ int main (void) {
 			}	
 		*/
 		
-		UART_Transmission();
+		//UART_Transmission();
 		
 		
 		if (data_ok) {
@@ -151,6 +151,7 @@ void SPI0_IRQHandler() {
 void UART0_IRQHandler() {
 	if(UART0->S1 & UART0_S1_RDRF_MASK)
 	{
+		//PTB->PCOR |= 1<<VDRIVE;
 		temp_uart=UART0->D;	// Odczyt wartosci z bufora odbiornika i skasowanie flagi RDRF
 		//ClockToggle(); 
 		if(!rx_FULL)
@@ -178,27 +179,24 @@ void UART0_IRQHandler() {
 
 void PORTB_IRQHandler(){
 	if( PORTB->ISFR & (1 << BUSY) ) {
-		//if (!((PTB->PDIR&0x01)>>(BUSY-1))){
 		CS_On();
-		ClockOFF();
-		//}
+		ClockON();
 		PORTB->PCR[BUSY] &= ~PORT_PCR_ISF_SHIFT;
 	}
 	NVIC_EnableIRQ(PORTB_IRQn);
 }
 
 void TPM0_IRQHandler() {
-	temp_data_dout[0] = ((PTA->PDIR & 0x0100)>>(D_OUT_A-1));
-	temp_data_dout[1] = ((PTA->PDIR & 0x0200)>>(D_OUT_B-1));
-	//temp_data[2] = ((PTA->PDIR & 0x0400)>>10) + '0';
-	temp_data_dout[2] = ((PTA->PDIR & 0x0400)>>(D_OUT_C-1));
-	temp_data_dout[3] = ((PTA->PDIR & 0x0800)>>(D_OUT_D-1));
+	temp_data_dout[0] = ((PTA->PDIR & 0x0080)>>(D_OUT_A-1));
+	temp_data_dout[1] = ((PTA->PDIR & 0x0100)>>(D_OUT_B-1));
+	temp_data_dout[2] = ((PTA->PDIR & 0x0200)>>(D_OUT_C-1));
+	temp_data_dout[3] = ((PTA->PDIR & 0x0400)>>(D_OUT_D-1));
 	if (output[0].fault != -1 || output[1].fault != -1 || output[2].fault != -1 || output[3].fault != -1) { 
 	sprintf(data_buf, "data=%x %x %x %x %x %x %x %x\r\n", output[0].extraction.byte1, output[0].extraction.byte2, 
 	output[1].extraction.byte1, output[1].extraction.byte2, output[2].extraction.byte1, output[2].extraction.byte2, 
 	output[3].extraction.byte1, output[3].extraction.byte2); 
-	//ClockOFF(); 
-	//CS_Off();
+	ClockOFF(); 
+	CS_Off();
 	}
 	//sprintf(data_buf, "XX=%d%d%d%d\r\n", temp_data[0], temp_data[1], temp_data[2], temp_data[3]);}
 	//sprintf(data_buf,"U=%.4fV\n",20.512310);
