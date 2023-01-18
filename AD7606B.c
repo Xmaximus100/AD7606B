@@ -42,8 +42,9 @@ void Set_DOUT(void){
 	PORTA->PCR[SS] = PORT_PCR_MUX(0x01);	
 	PORTA->PCR[MOSI] = PORT_PCR_MUX(0x01);	
 	PORTB->PCR[SCK] = (PORT_PCR_MUX(0x01) | PORT_PCR_PE_MASK);	
-	//Setting up as GPIO input with pull down, unable to disactivate, line nieed to be bridged with pin B9
 	PORTB->PCR[SCK] &= ~(PORT_PCR_PS_MASK);
+	//Setting up as GPIO input with pull down, unable to disactivate, line nieed to be bridged with pin B9
+	PORTB->PCR[SCK] &= ~(PORT_PCR_PS_MASK); //nie ustawia sie!
 	PORTA->PCR[D_OUT_A] = (PORT_PCR_MUX(0x01) | PORT_PCR_PE_MASK);
 	PORTA->PCR[D_OUT_A] &= ~(PORT_PCR_PS_MASK);
 	PORTA->PCR[D_OUT_B] = (PORT_PCR_MUX(0x01) | PORT_PCR_PE_MASK);

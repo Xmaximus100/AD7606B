@@ -41,7 +41,7 @@ uint8_t too_long=0;
 char rx_buf[16];
 char tekst = 1;
 char data_ok = FALSE;
-char interrupt_enable = FALSE;
+char interrupt_enable = TRUE;
 
 uint8_t i =0;
 /******************************************************************************\
@@ -85,7 +85,11 @@ int main (void) {
 			for(i=0; i<4; i++) output[i].word = LoadBuffer(temp_data_dout[i], i).word; 
 			//test = Extract(output[1]);
 			if (output[0].fault != -1 || output[1].fault != -1 || output[2].fault != -1 || output[3].fault != -1){
-
+				sprintf(data_buf, "data=%x %x %x %x %x %x %x %x\r\n", output[0].extraction.byte1, output[0].extraction.byte2, 
+				output[1].extraction.byte1, output[1].extraction.byte2, output[2].extraction.byte1, output[2].extraction.byte2, 
+				output[3].extraction.byte1, output[3].extraction.byte2); 
+				ClockOFF(); 
+				CS_Off();
 				interrupt_enable = TRUE;
 				//for(i=0;data_buf[i]!='\0';i++) //trying to find spot where i can stop iterating the list
 				for(i=0;i<40;i++)
@@ -94,6 +98,7 @@ int main (void) {
 					UART0->D = data_buf[i];
 				}
 			}
+			else interrupt_enable = FALSE;
 			data_ok = FALSE;
 		}
 		
@@ -102,6 +107,35 @@ int main (void) {
 
 void AD7606_Set(uint8_t address, uint8_t data){
 	SPI0_Write(address, data);
+}
+
+void UART_Transmission() {
+	if(rx_FULL)		// Czy dana gotowa?
+	{
+		if(too_long)
+		{
+			for(i=0;Too_Long[i]!=0;i++)	// Zbyt dlugi ciag
+				{
+					while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
+					UART0->D = Too_Long[i];
+				}
+				while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
+				UART0->D = 0xa;		// Nastepna linia
+				too_long=0;
+		}
+		else
+		{
+			for(i=0;Error[i]!=0;i++)	// Zla komenda
+				{
+					while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
+					UART0->D = Error[i];
+				}
+			while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
+			UART0->D = 0xa;		// Nastepna linia
+		}
+		rx_buf_pos=0;
+		rx_FULL=0;	// Dana skonsumowana
+	}
 }
 
 
@@ -135,8 +169,9 @@ void UART0_IRQHandler() {
 }
 
 void PORTB_IRQHandler(){
-	if( PORTB->ISFR & (1 << BUSY) ) {
-		FPTB->PSOR |= 1<<CONTROL_DIODE;
+	if( (PORTB->ISFR & (1 << BUSY)) && interrupt_enable) { //proba zablokowania wywolania przerwania
+		//przez sygnal BUSY, gdy w trakcie pobierania danych
+		//FPTB->PSOR |= 1<<CONTROL_DIODE;
 		CS_On();
 		ClockON();
 		PORTB->PCR[BUSY] &= ~PORT_PCR_ISF_SHIFT;
@@ -144,54 +179,26 @@ void PORTB_IRQHandler(){
 	NVIC_EnableIRQ(PORTB_IRQn);
 }
 
-void TPM0_IRQHandler() {	
+void TPM0_IRQHandler() {	//Sygnal busy pojawia sie raz za razem, nie do konca rozumiem z czego to wynika
+	//kompletnie nie czeka na przejscie danych, przerwanie jest jednak z pewnoscia za wolne, nalezy popracowac nad 
+	//optymalizacja
+	if(PTB->PDIR & 0x00){ //sprawdzenie czy zbocze jest narastajace
 	temp_data_dout[0] = ((PTA->PDIR & 0x0080)>>(D_OUT_A-1));
 	temp_data_dout[1] = ((PTA->PDIR & 0x0100)>>(D_OUT_B-1));
 	temp_data_dout[2] = ((PTA->PDIR & 0x0200)>>(D_OUT_C-1));
 	temp_data_dout[3] = ((PTA->PDIR & 0x0400)>>(D_OUT_D-1));
 	//if (output[0].fault != -1 || output[1].fault != -1 || output[2].fault != -1 || output[3].fault != -1) { 
-	if (interrupt_enable){
-	sprintf(data_buf, "data=%x %x %x %x %x %x %x %x\r\n", output[0].extraction.byte1, output[0].extraction.byte2, 
-	output[1].extraction.byte1, output[1].extraction.byte2, output[2].extraction.byte1, output[2].extraction.byte2, 
-	output[3].extraction.byte1, output[3].extraction.byte2); 
-	ClockOFF(); 
-	CS_Off();
-	interrupt_enable = FALSE; //na poczatku sprawdzalismy czy fault != -1 zarowno w petli glownej jak i tutaj
+	}
+	//na poczatku sprawdzalismy czy fault != -1 zarowno w petli glownej jak i tutaj
 	//co sprawialo, ze wykonywal gdy dane jeszcze nie byly gotowe (w kolejnej iteracji)
 	//roznicy jednak nie dalo sie zauwazyc, bez uzycia oscyloskopu
-	FPTB->PCOR |= 1<<CONTROL_DIODE;
-	}
+	
+	//przerwanie trwalo jednak zbyt dlugo, postanowilismy ograniczyc je tylko do sprawdzenia pinow
+	//FPTB->PCOR |= 1<<CONTROL_DIODE;
+	//}
 	data_ok = TRUE;
 	TPM0->CONTROLS[0].CnSC |= TPM_CnSC_CHF_MASK; // ToDo 2.1.8: Clear channel flag
 }
 
-void UART_Transmission(){
-	if(rx_FULL)		// Czy dana gotowa?
-	{
-		if(too_long)
-		{
-			for(i=0;Too_Long[i]!=0;i++)	// Zbyt dlugi ciag
-				{
-					while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
-					UART0->D = Too_Long[i];
-				}
-				while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
-				UART0->D = 0xa;		// Nastepna linia
-				too_long=0;
-		}
-		else
-		{
-			for(i=0;Error[i]!=0;i++)	// Zla komenda
-				{
-					while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
-					UART0->D = Error[i];
-				}
-			while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
-			UART0->D = 0xa;		// Nastepna linia
-		}
-		rx_buf_pos=0;
-		rx_FULL=0;	// Dana skonsumowana
-	}
-}
 
 

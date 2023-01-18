@@ -8,12 +8,12 @@ void TPM0_Init(void) {
 	
 	SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK; 
 	PORTB->PCR[SCK_TPM] = PORT_PCR_MUX(0x02);  
-	
-	TPM0->SC |= TPM_SC_PS(0x07);  				// ToDo 2.1.3: Set prescaler to 128
+	//prescaler 0x04 za szybki
+	TPM0->SC |= TPM_SC_PS(0x05);  				// ToDo 2.1.3: Set prescaler to 128
 	TPM0->SC |= TPM_SC_CMOD(0x01);					// ToDo 2.1.4: For TMP1, select the internal input clock source
 	
 	//TPM0->CNT = 0;
-	TPM0->MOD = 0x0015; //0015
+	TPM0->MOD = 0x10FF; //0015
 	
 	TPM0->SC &= ~TPM_SC_CPWMS_MASK; 		/* up counting */
 	TPM0->CONTROLS[0].CnSC &= ~ (TPM_CnSC_ELSB_MASK | TPM_CnSC_MSB_MASK); //Output Capture toggle on overload
@@ -22,7 +22,7 @@ void TPM0_Init(void) {
 	
 	//We set TPM interrupt to gather GPIO data each pulse 
 	TPM0->CONTROLS[0].CnSC |= TPM_CnSC_CHIE_MASK; 
-	NVIC_SetPriority(TPM0_IRQn, 2);  /* TPM1 interrupt priority level  */
+	NVIC_SetPriority(TPM0_IRQn, 1);  /* TPM1 interrupt priority level  */
 
 	NVIC_ClearPendingIRQ(TPM0_IRQn); 
 	NVIC_EnableIRQ(TPM0_IRQn);	/* Enable Interrupts */
