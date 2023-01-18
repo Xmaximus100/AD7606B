@@ -69,10 +69,10 @@ int main (void) {
 	ResetDelay();
 	SPI0_Init();
 	AD7606_Set(0x02,0x10);
-	AD7606_Set(0x03,0x00);
-	AD7606_Set(0x04,0x00);
-	AD7606_Set(0x05,0x00);
-	AD7606_Set(0x06,0x00);
+	AD7606_Set(0x03,0x10);
+	AD7606_Set(0x04,0x10);
+	AD7606_Set(0x05,0x10);
+	AD7606_Set(0x06,0x10);
 	Set_DOUT(); 
 	UART0_Init();
 	TPM0_Init();
@@ -212,8 +212,8 @@ void TPM0_IRQHandler() {	//Sygnal busy pojawia sie raz za razem, nie do konca ro
 	//temp_data_dout[1] = ((PTA->PDIR & 0x0100)>>(D_OUT_B-1));
 	//temp_data_dout[2] = ((PTA->PDIR & 0x0200)>>(D_OUT_C-1));
 	//temp_data_dout[3] = ((PTA->PDIR & 0x0400)>>(D_OUT_D-1));
-	temp_buf[0][main_iter] = ((PTA->PDIR & 0x0080)>>(D_OUT_A-1));
-	temp_buf[1][main_iter] = ((PTA->PDIR & 0x0100)>>(D_OUT_B-1));
+	temp_buf[0][main_iter] = ((PTA->PDIR >>(D_OUT_A)) & 0x01);
+	temp_buf[1][main_iter] = ((PTA->PDIR >>(D_OUT_B)) & 0x01);
 	data_ok = TRUE;
 	if(main_iter++>31) {ClockOFF(); CS_Off();}
 	//if (output[0].fault != -1 || output[1].fault != -1 || output[2].fault != -1 || output[3].fault != -1) { 
