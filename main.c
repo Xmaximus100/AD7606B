@@ -105,7 +105,7 @@ int main (void) {
 		*/
 		if (main_iter>31){
 			//ClockOFF();
-			CS_Off();
+			//CS_Off();
 			for(i=0; i<32; i++) {
 				output[0].word = LoadBuffer(temp_buf[0][i], 0).word;
 				output[1].word = LoadBuffer(temp_buf[1][i], 1).word; 
@@ -215,7 +215,7 @@ void TPM0_IRQHandler() {	//Sygnal busy pojawia sie raz za razem, nie do konca ro
 	temp_buf[0][main_iter] = ((PTA->PDIR & 0x0080)>>(D_OUT_A-1));
 	temp_buf[1][main_iter] = ((PTA->PDIR & 0x0100)>>(D_OUT_B-1));
 	data_ok = TRUE;
-	if(main_iter++>31) ClockOFF();
+	if(main_iter++>31) {ClockOFF(); CS_Off();}
 	//if (output[0].fault != -1 || output[1].fault != -1 || output[2].fault != -1 || output[3].fault != -1) { 
 	}
 	//na poczatku sprawdzalismy czy fault != -1 zarowno w petli glownej jak i tutaj

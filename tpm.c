@@ -45,7 +45,8 @@ void TPM1_Init(void) {
 	TPM1->CONTROLS[0].CnV = 0x00A0;
 	
 	TPM1->SC &= ~TPM_SC_CPWMS_MASK; 		/* up counting */
-	TPM1->CONTROLS[0].CnSC |= (TPM_CnSC_ELSA_MASK | TPM_CnSC_MSB_MASK | TPM_CnSC_MSA_MASK);	//Output capture pulse on match
+	TPM1->CONTROLS[0].CnSC |= (TPM_CnSC_ELSB_MASK | TPM_CnSC_MSB_MASK | TPM_CnSC_MSA_MASK);	//Output capture pulse on match
+	TPM1->CONTROLS[0].CnSC &= ~(TPM_CnSC_ELSA_MASK);
   //TPM0->CONTROLS[2].CnSC |= (TPM_CnSC_MSA_MASK | TPM_CnSC_ELSA_MASK | TPM_CnSC_MSA_MASK);
 	
 	//TPM1->CONTROLS[0].CnSC |= TPM_CnSC_CHIE_MASK; 
