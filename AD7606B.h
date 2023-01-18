@@ -9,6 +9,7 @@
 #define _PAR_SER			5
 #define BUSY					3
 #define CONTROL_DIODE	8
+#define RANGE					7
 
 #define D_OUT_A				8
 #define D_OUT_B				9
@@ -40,7 +41,8 @@ typedef union{
 	} extraction;
 	uint32_t word;
 } data_ex;
-
+void BUSY_EN(void);
+void BUSY_DIS(void);
 void AD7606B_Init(void);
 void ResetDelay(void);
 void Set_DOUT(void);

@@ -28,6 +28,7 @@ uint8_t write_data = 0;
 data_ex test;
 data_ex output[4] = {0,0,0,0};
 char temp_data_dout[] = {0x00, 0x00, 0x00, 0x00};
+char temp_buf[2][32];
 char abc_buf[] = {"Jazda jazda jazda\r\n"};
 char def_buf[] = {"Biala gwiazda\r\n"};
 char data_buf[] = {0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20, 0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,
@@ -38,10 +39,10 @@ uint8_t rx_buf_pos=0;
 char temp_uart,buf;
 uint8_t rx_FULL=FALSE;
 uint8_t too_long=0;
+uint16_t main_iter = 0;
 char rx_buf[16];
 char tekst = 1;
 char data_ok = FALSE;
-char interrupt_enable = TRUE;
 
 uint8_t i =0;
 /******************************************************************************\
@@ -76,18 +77,18 @@ int main (void) {
 	UART0_Init();
 	TPM0_Init();
 	TPM1_Init();
-	int iter = 0;
 	while(1) {
 		//UART_Transmission();
 		
-		
+		/*
 		if (data_ok) {
 			for(i=0; i<4; i++) output[i].word = LoadBuffer(temp_data_dout[i], i).word; 
 			//test = Extract(output[1]);
 			if (output[0].fault != -1 || output[1].fault != -1 || output[2].fault != -1 || output[3].fault != -1){
 				sprintf(data_buf, "data=%x %x %x %x %x %x %x %x\r\n", output[0].extraction.byte1, output[0].extraction.byte2, 
-				output[1].extraction.byte1, output[1].extraction.byte2, output[2].extraction.byte1, output[2].extraction.byte2, 
-				output[3].extraction.byte1, output[3].extraction.byte2); 
+				output[1].extraction.byte1, output[1].extraction.byte2);
+			//, output[2].extraction.byte1, output[2].extraction.byte2, 
+			//	output[3].extraction.byte1, output[3].extraction.byte2); 
 				ClockOFF(); 
 				CS_Off();
 				interrupt_enable = TRUE;
@@ -100,6 +101,30 @@ int main (void) {
 			}
 			else interrupt_enable = FALSE;
 			data_ok = FALSE;
+		}
+		*/
+		if (main_iter>31){
+			//ClockOFF();
+			CS_Off();
+			for(i=0; i<32; i++) {
+				output[0].word = LoadBuffer(temp_buf[0][i], 0).word;
+				output[1].word = LoadBuffer(temp_buf[1][i], 1).word; 
+			}
+			main_iter=0;
+			BUSY_EN();
+			
+			
+			if (output[0].fault != -1 || output[1].fault != -1 || output[2].fault != -1 || output[3].fault != -1){
+				sprintf(data_buf, "data=%x %x %x %x\r\n", output[0].extraction.byte1, output[0].extraction.byte2, 
+				output[1].extraction.byte1, output[1].extraction.byte2);
+				for(i=0;i<40;i++)
+				{
+					while(!(UART0->S1 & UART0_S1_TDRE_MASK));
+					UART0->D = data_buf[i];
+				}
+			}
+				//*/
+			
 		}
 		
 	}
@@ -169,24 +194,28 @@ void UART0_IRQHandler() {
 }
 
 void PORTB_IRQHandler(){
-	if( (PORTB->ISFR & (1 << BUSY)) && interrupt_enable) { //proba zablokowania wywolania przerwania
-		//przez sygnal BUSY, gdy w trakcie pobierania danych
-		//FPTB->PSOR |= 1<<CONTROL_DIODE;
-		CS_On();
-		ClockON();
-		PORTB->PCR[BUSY] &= ~PORT_PCR_ISF_SHIFT;
-	}
+//proba zablokowania wywolania przerwania
+//przez sygnal BUSY, gdy w trakcie pobierania danych
+//FPTB->PSOR |= 1<<CONTROL_DIODE;
+	CS_On();
+	ClockON();
+	BUSY_DIS();
+	PORTB->PCR[BUSY] &= ~PORT_PCR_ISF_SHIFT;
 	NVIC_EnableIRQ(PORTB_IRQn);
 }
 
 void TPM0_IRQHandler() {	//Sygnal busy pojawia sie raz za razem, nie do konca rozumiem z czego to wynika
 	//kompletnie nie czeka na przejscie danych, przerwanie jest jednak z pewnoscia za wolne, nalezy popracowac nad 
 	//optymalizacja
-	if(PTB->PDIR & 0x00){ //sprawdzenie czy zbocze jest narastajace
-	temp_data_dout[0] = ((PTA->PDIR & 0x0080)>>(D_OUT_A-1));
-	temp_data_dout[1] = ((PTA->PDIR & 0x0100)>>(D_OUT_B-1));
-	temp_data_dout[2] = ((PTA->PDIR & 0x0200)>>(D_OUT_C-1));
-	temp_data_dout[3] = ((PTA->PDIR & 0x0400)>>(D_OUT_D-1));
+	if(PTB->PDIR & 0x01){ //sprawdzenie czy zbocze jest narastajace
+	//temp_data_dout[0] = ((PTA->PDIR & 0x0080)>>(D_OUT_A-1));
+	//temp_data_dout[1] = ((PTA->PDIR & 0x0100)>>(D_OUT_B-1));
+	//temp_data_dout[2] = ((PTA->PDIR & 0x0200)>>(D_OUT_C-1));
+	//temp_data_dout[3] = ((PTA->PDIR & 0x0400)>>(D_OUT_D-1));
+	temp_buf[0][main_iter] = ((PTA->PDIR & 0x0080)>>(D_OUT_A-1));
+	temp_buf[1][main_iter] = ((PTA->PDIR & 0x0100)>>(D_OUT_B-1));
+	data_ok = TRUE;
+	if(main_iter++>31) ClockOFF();
 	//if (output[0].fault != -1 || output[1].fault != -1 || output[2].fault != -1 || output[3].fault != -1) { 
 	}
 	//na poczatku sprawdzalismy czy fault != -1 zarowno w petli glownej jak i tutaj
@@ -196,7 +225,7 @@ void TPM0_IRQHandler() {	//Sygnal busy pojawia sie raz za razem, nie do konca ro
 	//przerwanie trwalo jednak zbyt dlugo, postanowilismy ograniczyc je tylko do sprawdzenia pinow
 	//FPTB->PCOR |= 1<<CONTROL_DIODE;
 	//}
-	data_ok = TRUE;
+	//data_ok = TRUE;
 	TPM0->CONTROLS[0].CnSC |= TPM_CnSC_CHF_MASK; // ToDo 2.1.8: Clear channel flag
 }
 

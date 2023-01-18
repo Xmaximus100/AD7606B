@@ -6,13 +6,25 @@ uint8_t block_iter[] = {0,0,0,0};
 uint32_t temp_ch[8];
 registers reg;
 
+void BUSY_EN(void)
+{
+	PORTB->PCR[BUSY] |= 	PORT_PCR_IRQC(0xA);
+}
+
+void BUSY_DIS(void)
+{
+	PORTB->PCR[BUSY] &= 	~(PORT_PCR_IRQC(0xA));
+}
+
+
 void AD7606B_Init(void){							/* clock for PORTB */
 	SIM->SCGC5 |= (SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK); 
 	PORTB->PCR[REFSEL] = PORT_PCR_MUX(1);		
 	PORTB->PCR[VDRIVE] = PORT_PCR_MUX(1);	
 	PORTB->PCR[BUSY] = PORT_PCR_MUX(1);
 	PORTB->PCR[_PAR_SER] = PORT_PCR_MUX(1);
-	//PORTB->PCR[CONTROL_DIODE] = PORT_PCR_MUX(1);
+	//PORTB->PCR[RANGE] = PORT_PCR_MUX(1);
+	//PORTB->PCR[CONTROL_DIODE] = PORT_PCR_MUX(1); //ustawienie tej diody rowniez anuluje przerwanie 
 //	| PORT_PCR_PE_MASK);
 	PORTB->PCR[BUSY] |=  PORT_PCR_PE_MASK |		
 											 PORT_PCR_PS_MASK;
@@ -21,6 +33,8 @@ void AD7606B_Init(void){							/* clock for PORTB */
 	
 	PORTB->PCR[BUSY] |= 	PORT_PCR_IRQC(0xA);
 	
+	
+	//PTB->PDDR |= 1<<RANGE; //ustawianie B7 jako RANGE, wywala przerwania na zegarze
 	PTB->PDDR |= 1<<REFSEL;
 	PTB->PDDR |= 1<<_PAR_SER;
 	FPTB->PDDR |= 1<<CONTROL_DIODE;
@@ -28,6 +42,7 @@ void AD7606B_Init(void){							/* clock for PORTB */
 	//PTB->PDDR |= ~(1<<_PAR_SER); //is input when reset
 	PTB->PDDR &= ~(1<<BUSY); //is input when reset
 	
+	//PTB->PSOR |= 1<<RANGE;
 	PTB->PSOR |= 1<<REFSEL;	
 	PTB->PSOR |= 1<<_PAR_SER;
 	PTB->PCOR |= 1<<VDRIVE;	//przy resecie pin ma wartosc ~1V
