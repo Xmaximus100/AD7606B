@@ -37,7 +37,7 @@ void TPM1_Init(void) {
 	SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK; 
 	PORTA->PCR[BUSY_ITR] = PORT_PCR_MUX(0x02);  
 	
-	TPM1->SC |= TPM_SC_PS(0x02);  				// ToDo 2.1.3: Set prescaler to 128
+	TPM1->SC |= TPM_SC_PS(0x06);  				// ToDo 2.1.3: Set prescaler to 128
 	TPM1->SC |= TPM_SC_CMOD(0x01);					// ToDo 2.1.4: For TMP1, select the internal input clock source
 	
 	TPM1->CNT = 0x0000;
