@@ -31,13 +31,15 @@ data_ex test;
 data_ex output[4] = {0,0,0,0};
 char temp_data_dout[] = {0x00, 0x00, 0x00, 0x00};
 char temp_buf[2][32];
+uint32_t samples_amount = 0;
+uint32_t SAMPLES_MAX =  UINT32_MAX;
+uint32_t sample_iter = 0;
+
 char abc_buf[] = {"Jazda jazda jazda\r\n"};
 char def_buf[] = {"Biala gwiazda\r\n"};
 char data_buf[] = {0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20, 0x20,0x20,0x20,0x20,0x20};
 char Too_Long[]="Zbyt dlugi ciag";
-char Error[]="Zla komenda";
-	
-
+char Error[]="Zla komenda";	
 	
 uint8_t rx_buf_pos=0;
 char temp_uart,buf;
@@ -53,7 +55,7 @@ uint8_t i =0;
 * Private prototypes
 \******************************************************************************/	
 void CommunicationSetup(void);
-void Reset(void);
+void Reset(char value);
 void CheckUART(void);
 void PORTB_IRQHandler(void);
 void SPI0_IRQHandler(void);
@@ -74,7 +76,7 @@ void AD7606_Set(uint8_t, uint8_t);
 int main (void) { 
 	CommunicationSetup();
 	while(1) {
-		UART_Transmission();
+		//UART_Transmission();
 		CheckUART();
 		
 		/*
@@ -100,30 +102,32 @@ int main (void) {
 			data_ok = FALSE;
 		}
 		*/
-		if (main_iter>31){
-			//ClockOFF();
-			//CS_Off();
-			for(i=0; i<32; i++) {
-				output[0].package.word = LoadBuffer(temp_buf[0][31-i], 0).package.word;
-				output[1].package.word = LoadBuffer(temp_buf[1][31-i], 1).package.word; 
-			}
-			main_iter=0;
-			BUSY_EN();
-			
-			
-			if (output[0].package.fault != -1 || output[1].package.fault != -1 || output[2].package.fault != -1 || output[3].package.fault != -1){
-				sprintf(data_buf, "%x%x%x%x", output[0].extraction.byte1, output[0].extraction.byte2, 
-				output[1].extraction.byte1, output[1].extraction.byte2);
-			  for(i=0;i<16;i++)
-				{
-					while(!(UART0->S1 & UART0_S1_TDRE_MASK));
-					UART0->D = data_buf[i];
+		if (sample_iter<samples_amount){
+			if (main_iter>31){
+				//ClockOFF();
+				//CS_Off();
+				for(i=0; i<32; i++) {
+					output[0].package.word = LoadBuffer(temp_buf[0][31-i], 0).package.word;
+					output[1].package.word = LoadBuffer(temp_buf[1][31-i], 1).package.word; 
 				}
+				main_iter=0;
+				BUSY_EN();
+				
+				
+				if (output[0].package.fault != -1 || output[1].package.fault != -1 || output[2].package.fault != -1 || output[3].package.fault != -1){
+					sprintf(data_buf, "%x%x%x%x", output[0].extraction.byte1, output[0].extraction.byte2, 
+					output[1].extraction.byte1, output[1].extraction.byte2);
+					for(i=0;i<16;i++)
+					{
+						while(!(UART0->S1 & UART0_S1_TDRE_MASK));
+						UART0->D = data_buf[i];
+					}
+					sample_iter++;
+				}
+					//*/
+				
 			}
-				//*/
-			
 		}
-		
 	}
 }
 
@@ -143,7 +147,7 @@ void CommunicationSetup(){
 	TPM1_Init();
 }
 
-void Reset(){
+void Reset(char value){
 	BUSY_DIS();
 	ClockOFF();
 	CONVST_OFF();
@@ -154,9 +158,9 @@ void Reset(){
 	SPI0_Init();
 	AD7606_Set(0x02,0x10);
 	for(int i=0;i<100;i++);
-	AD7606_Set(0x03,0x01);
+	AD7606_Set(0x03,value);
 	for(int i=0;i<100;i++);
-	AD7606_Set(0x04,0x01);
+	AD7606_Set(0x04,value);
 	for(int i=0;i<100;i++);
 	Set_DOUT(); 
 	ClockON();
@@ -169,8 +173,11 @@ void AD7606_Set(uint8_t address, uint8_t data){
 }
 
 void CheckUART() {
-	if(temp_uart == TOG)	BUSY_Toggle();
-	else if(temp_uart == RST) {BUSY_DIS(); Reset();}
+	if(temp_uart == TOG)	{BUSY_Toggle(); ClockOFF();}
+	else if(temp_uart == RST) {BUSY_DIS(); Reset(0x22);}
+	else if(temp_uart == '1') {BUSY_DIS(); sample_iter=0; samples_amount=10; Reset(0x22);}
+	else if(temp_uart == '2') {BUSY_DIS(); sample_iter=0; samples_amount=20; Reset(0x22);}
+	else if(temp_uart == '3') {BUSY_DIS(); sample_iter=0; samples_amount=5; Reset(0x22);}
 	temp_uart = 0;
 }
 
@@ -190,8 +197,11 @@ void UART_Transmission() {
 		}
 		else
 		{
-			//if(atoi(rx_buf) == Reset)	BUSY_Toggle(); 
-			//else {
+			if(atoi(rx_buf)>0 && atoi(rx_buf)<SAMPLES_MAX)	{
+				samples_amount=atoi(rx_buf); 
+				Reset(0x11);
+			}
+			else {
 			for(i=0;Error[i]!=0;i++)	// Zla komenda
 				{
 					while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
@@ -200,7 +210,7 @@ void UART_Transmission() {
 			while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
 			UART0->D = 0xa;		// Nastepna linia
 			}
-		//}
+		}
 		rx_buf_pos=0;
 		rx_FULL=0;	// Dana skonsumowana
 	}
