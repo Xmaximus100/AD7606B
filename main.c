@@ -19,6 +19,8 @@
 #include <stdlib.h>
 
 #define LF 0xa //Enter
+#define RST 0x20 //Space
+#define TOG 'a'
 
 //UART baudrate=115200
 
@@ -34,6 +36,9 @@ char def_buf[] = {"Biala gwiazda\r\n"};
 char data_buf[] = {0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20, 0x20,0x20,0x20,0x20,0x20};
 char Too_Long[]="Zbyt dlugi ciag";
 char Error[]="Zla komenda";
+	
+
+	
 uint8_t rx_buf_pos=0;
 char temp_uart,buf;
 uint8_t rx_FULL=FALSE;
@@ -47,6 +52,9 @@ uint8_t i =0;
 /******************************************************************************\
 * Private prototypes
 \******************************************************************************/	
+void CommunicationSetup(void);
+void Reset(void);
+void CheckUART(void);
 void PORTB_IRQHandler(void);
 void SPI0_IRQHandler(void);
 void UART0_IRQHandler(void);
@@ -64,25 +72,10 @@ void AD7606_Set(uint8_t, uint8_t);
  * @return NULL 
  */
 int main (void) { 
-	AD7606B_Init();
-	ResetDelay();
-	SPI0_Init();
-	AD7606_Set(0x02,0x10);
-	for(int i=0;i<100;i++);
-	AD7606_Set(0x03,0x0);
-	for(int i=0;i<100;i++);
-	AD7606_Set(0x04,0x0);
-	for(int i=0;i<100;i++);
-	AD7606_Set(0x05,0x0);
-	for(int i=0;i<100;i++);
-	AD7606_Set(0x06,0x0);
-	for(int i=0;i<100;i++);
-	Set_DOUT(); 
-	UART0_Init();
-	TPM0_Init();
-	TPM1_Init();
+	CommunicationSetup();
 	while(1) {
-		//UART_Transmission();
+		UART_Transmission();
+		CheckUART();
 		
 		/*
 		if (data_ok) {
@@ -134,8 +127,51 @@ int main (void) {
 	}
 }
 
+void CommunicationSetup(){
+	AD7606B_Init();
+	ResetDelay();
+	SPI0_Init();
+	AD7606_Set(0x02,0x10);
+	for(int i=0;i<100;i++);
+	AD7606_Set(0x03,0x0);
+	for(int i=0;i<100;i++);
+	AD7606_Set(0x04,0x0);
+	for(int i=0;i<100;i++);
+	Set_DOUT(); 
+	UART0_Init();
+	TPM0_Init();
+	TPM1_Init();
+}
+
+void Reset(){
+	BUSY_DIS();
+	ClockOFF();
+	CONVST_OFF();
+	ResetDelay();
+	ResetDiodeON();
+	for(int i=0; i<10000;i++);
+	ResetDiodeOFF();
+	SPI0_Init();
+	AD7606_Set(0x02,0x10);
+	for(int i=0;i<100;i++);
+	AD7606_Set(0x03,0x01);
+	for(int i=0;i<100;i++);
+	AD7606_Set(0x04,0x01);
+	for(int i=0;i<100;i++);
+	Set_DOUT(); 
+	ClockON();
+	CONVST_ON();
+	BUSY_EN();
+}
+
 void AD7606_Set(uint8_t address, uint8_t data){
 	SPI0_Write(address, data);
+}
+
+void CheckUART() {
+	if(temp_uart == TOG)	BUSY_Toggle();
+	else if(temp_uart == RST) {BUSY_DIS(); Reset();}
+	temp_uart = 0;
 }
 
 void UART_Transmission() {
@@ -154,6 +190,8 @@ void UART_Transmission() {
 		}
 		else
 		{
+			//if(atoi(rx_buf) == Reset)	BUSY_Toggle(); 
+			//else {
 			for(i=0;Error[i]!=0;i++)	// Zla komenda
 				{
 					while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
@@ -161,7 +199,8 @@ void UART_Transmission() {
 				}
 			while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
 			UART0->D = 0xa;		// Nastepna linia
-		}
+			}
+		//}
 		rx_buf_pos=0;
 		rx_FULL=0;	// Dana skonsumowana
 	}
@@ -173,7 +212,9 @@ void UART0_IRQHandler() {
 	{
 		//PTB->PCOR |= 1<<VDRIVE;
 		temp_uart=UART0->D;	// Odczyt wartosci z bufora odbiornika i skasowanie flagi RDRF
+		//if(temp_uart==Reset) BUSY_Toggle();
 		//ClockToggle(); 
+		/*
 		if(!rx_FULL)
 		{
 			if(temp_uart!=LF)
@@ -193,6 +234,7 @@ void UART0_IRQHandler() {
 				rx_FULL=1;
 			}
 		}
+		*/
 	NVIC_EnableIRQ(UART0_IRQn);
 	}
 }

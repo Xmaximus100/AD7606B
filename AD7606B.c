@@ -6,25 +6,52 @@ uint8_t block_iter[] = {0,0,0,0};
 uint32_t temp_ch[8];
 registers reg;
 
+void SetAddress(void){
+	reg.channel[0].address = 0x03;
+	reg.channel[1].address = 0x03;
+	reg.channel[2].address = 0x04;
+	reg.channel[3].address = 0x04;
+	reg.channel[0].value.RANGE2_5V = 0x00;
+	reg.channel[0].value.RANGE5V = 0x01;
+	reg.channel[0].value.RANGE10V = 0x02;
+	reg.channel[1].value.RANGE2_5V = 0x00;
+	reg.channel[1].value.RANGE5V = 0x01<<4;
+	reg.channel[1].value.RANGE10V = 0x02<<4;
+	reg.channel[2].value.RANGE2_5V = 0x00;
+	reg.channel[2].value.RANGE5V = 0x01;
+	reg.channel[2].value.RANGE10V = 0x02;
+	reg.channel[3].value.RANGE2_5V = 0x00;
+	reg.channel[3].value.RANGE5V = 0x01<<4;
+	reg.channel[3].value.RANGE10V = 0x02<<4;
+	reg.config.address = 0x02;
+	reg.config.data = 0x10; 
+}
+
+void BUSY_Toggle(void)
+{
+	PORTB->PCR[BUSY] ^= PORT_PCR_IRQC(0xA);
+}
+
 void BUSY_EN(void)
 {
-	PORTB->PCR[BUSY] |= 	PORT_PCR_IRQC(0xA);
+	PORTB->PCR[BUSY] |= PORT_PCR_IRQC(0xA);
 }
 
 void BUSY_DIS(void)
 {
-	PORTB->PCR[BUSY] &= 	~(PORT_PCR_IRQC(0xA));
+	PORTB->PCR[BUSY] &= ~(PORT_PCR_IRQC(0xA));
 }
 
 
-void AD7606B_Init(void){							/* clock for PORTB */
+void AD7606B_Init(void){	
+	SetAddress();
 	SIM->SCGC5 |= (SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK); 
 	PORTB->PCR[REFSEL] = PORT_PCR_MUX(1);		
 	PORTB->PCR[VDRIVE] = PORT_PCR_MUX(1);	
 	PORTB->PCR[BUSY] = PORT_PCR_MUX(1);
 	PORTB->PCR[_PAR_SER] = PORT_PCR_MUX(1);
 	PORTB->PCR[RANGE] = PORT_PCR_MUX(1);
-	//PORTB->PCR[CONTROL_DIODE] = PORT_PCR_MUX(1); //ustawienie tej diody rowniez anuluje przerwanie 
+	PORTB->PCR[CONTROL_DIODE] = PORT_PCR_MUX(1); //ustawienie tej diody rowniez anuluje przerwanie 
 //	| PORT_PCR_PE_MASK);
 	PORTB->PCR[BUSY] |=  PORT_PCR_PE_MASK |		
 											 PORT_PCR_PS_MASK;
@@ -43,6 +70,7 @@ void AD7606B_Init(void){							/* clock for PORTB */
 	PTB->PDDR &= ~(1<<BUSY); //is input when reset
 	
 	//PTB->PSOR |= 1<<RANGE;
+	FPTB->PSOR |= 1<<CONTROL_DIODE;
 	PTB->PSOR |= 1<<REFSEL;	
 	PTB->PSOR |= 1<<_PAR_SER;
 	PTB->PCOR |= 1<<VDRIVE;	//przy resecie pin ma wartosc ~1V
@@ -105,5 +133,12 @@ void ResetDelay(void){
 	for(int i=0;i<2000;i++); //340us
 }
 
+void ResetDiodeON(void){
+	FPTB->PCOR |= 1<<CONTROL_DIODE;
+}
+
+void ResetDiodeOFF(void){
+	FPTB->PSOR |= 1<<CONTROL_DIODE;
+}
 
 

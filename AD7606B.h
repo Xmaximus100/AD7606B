@@ -20,11 +20,19 @@
 #define SCK				0
 #define SS				5
 
+
 typedef struct{
-	uint8_t channel[8];
-	uint8_t value;
 	struct{
 		uint8_t address;
+		struct{
+			uint8_t RANGE2_5V;
+			uint8_t RANGE5V;
+			uint8_t RANGE10V;
+		} value;
+	} channel[4];
+	struct{
+		uint8_t address;
+		uint8_t data;
 		char status_header;
 		char ext_os_clock;
 		char dout_format;
@@ -44,10 +52,15 @@ typedef union{
 	int8_t fault;
 	} package;
 } data_ex;
+
+void BUSY_Toggle(void);
 void BUSY_EN(void);
 void BUSY_DIS(void);
+void SetAddress(void);
 void AD7606B_Init(void);
 void ResetDelay(void);
+void ResetDiodeON(void);
+void ResetDiodeOFF(void);
 void Set_DOUT(void);
 data_ex LoadBuffer(char, char);
 data_ex Extract(uint32_t);

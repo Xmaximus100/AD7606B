@@ -9,4 +9,6 @@ void TPM1_Init(void);
 void ClockToggle(void);
 void ClockON(void);
 void ClockOFF(void);
+void CONVST_ON(void);
+void CONVST_OFF(void);
 

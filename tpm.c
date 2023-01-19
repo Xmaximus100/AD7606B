@@ -58,8 +58,8 @@ void TPM1_Init(void) {
 }
 
 void ClockToggle(void){
-	//TPM0->SC ^=  TPM_SC_CMOD(0x01);
-	TPM0->CONTROLS[0].CnSC ^= (TPM_CnSC_ELSA_MASK | TPM_CnSC_MSA_MASK);
+	TPM0->SC ^=  TPM_SC_CMOD(0x01);
+	//TPM0->CONTROLS[0].CnSC ^= (TPM_CnSC_ELSA_MASK | TPM_CnSC_MSA_MASK);
 }
 
 void ClockON(void){
@@ -73,3 +73,11 @@ void ClockOFF(void){ //wyzwolic przy odczytaniu pelnego bufora 32bity
 	//TPM0->CONTROLS[0].CnSC &= ~(TPM_CnSC_ELSA_MASK | TPM_CnSC_MSA_MASK);
 }
 
+void CONVST_OFF(void){
+	TPM1->CNT = 0x0000;
+	TPM1->SC &=  ~TPM_SC_CMOD(0x01);
+}
+
+void CONVST_ON(void){
+	TPM1->SC |=  TPM_SC_CMOD(0x01);
+}
