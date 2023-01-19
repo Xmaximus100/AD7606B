@@ -33,13 +33,16 @@ typedef struct{
 } registers;
 
 typedef union{
-	int8_t fault;
 	struct{ //mozliwe ze przez wstawienie struktury nieanonimowej, unia stracila 
 		//mozliwosc sklejania bitow - trzeba sprawdzic
 		uint16_t byte1;
 		uint16_t byte2;
+		int8_t fault;
 	} extraction;
+	struct{
 	uint32_t word;
+	int8_t fault;
+	} package;
 } data_ex;
 void BUSY_EN(void);
 void BUSY_DIS(void);

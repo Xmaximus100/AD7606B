@@ -23,7 +23,7 @@ void AD7606B_Init(void){							/* clock for PORTB */
 	PORTB->PCR[VDRIVE] = PORT_PCR_MUX(1);	
 	PORTB->PCR[BUSY] = PORT_PCR_MUX(1);
 	PORTB->PCR[_PAR_SER] = PORT_PCR_MUX(1);
-	//PORTB->PCR[RANGE] = PORT_PCR_MUX(1);
+	PORTB->PCR[RANGE] = PORT_PCR_MUX(1);
 	//PORTB->PCR[CONTROL_DIODE] = PORT_PCR_MUX(1); //ustawienie tej diody rowniez anuluje przerwanie 
 //	| PORT_PCR_PE_MASK);
 	PORTB->PCR[BUSY] |=  PORT_PCR_PE_MASK |		
@@ -34,7 +34,7 @@ void AD7606B_Init(void){							/* clock for PORTB */
 	PORTB->PCR[BUSY] |= 	PORT_PCR_IRQC(0xA);
 	
 	
-	//PTB->PDDR |= 1<<RANGE; //ustawianie B7 jako RANGE, wywala przerwania na zegarze
+	PTB->PDDR |= 1<<RANGE; //ustawianie B7 jako RANGE, wywala przerwania na zegarze
 	PTB->PDDR |= 1<<REFSEL;
 	PTB->PDDR |= 1<<_PAR_SER;
 	FPTB->PDDR |= 1<<CONTROL_DIODE;
@@ -74,22 +74,20 @@ void Set_DOUT(void){
 
 data_ex LoadBuffer(char data, char block){
 	data_ex something;
-	if (load_enable) {
-		buffer_ch[block] += data<<block_iter[block]; block_iter[block]++; 
+	buffer_ch[block] += data<<block_iter[block]; block_iter[block]++; 
 	if(block_iter[block]>31) {
 		block_iter[block] = 0;
-		something.word = buffer_ch[block];
+		something.package.word = buffer_ch[block];
 		buffer_ch[block] = 0;
 		return something;
 	}
-	}
-	something.fault = -1;
+	something.package.fault = -1;
 	return something;
 }
 
 data_ex Extract(uint32_t word0){
 	data_ex something;
-	something.word = word0;
+	something.package.word = word0;
 	return something;
 }
 

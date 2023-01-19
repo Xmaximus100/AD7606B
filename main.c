@@ -31,8 +31,7 @@ char temp_data_dout[] = {0x00, 0x00, 0x00, 0x00};
 char temp_buf[2][32];
 char abc_buf[] = {"Jazda jazda jazda\r\n"};
 char def_buf[] = {"Biala gwiazda\r\n"};
-char data_buf[] = {0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20, 0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,
-0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20};
+char data_buf[] = {0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20, 0x20,0x20,0x20,0x20,0x20};
 char Too_Long[]="Zbyt dlugi ciag";
 char Error[]="Zla komenda";
 uint8_t rx_buf_pos=0;
@@ -69,10 +68,15 @@ int main (void) {
 	ResetDelay();
 	SPI0_Init();
 	AD7606_Set(0x02,0x10);
-	AD7606_Set(0x03,0x10);
-	AD7606_Set(0x04,0x10);
-	AD7606_Set(0x05,0x10);
-	AD7606_Set(0x06,0x10);
+	for(int i=0;i<100;i++);
+	AD7606_Set(0x03,0x0);
+	for(int i=0;i<100;i++);
+	AD7606_Set(0x04,0x0);
+	for(int i=0;i<100;i++);
+	AD7606_Set(0x05,0x0);
+	for(int i=0;i<100;i++);
+	AD7606_Set(0x06,0x0);
+	for(int i=0;i<100;i++);
 	Set_DOUT(); 
 	UART0_Init();
 	TPM0_Init();
@@ -107,17 +111,17 @@ int main (void) {
 			//ClockOFF();
 			//CS_Off();
 			for(i=0; i<32; i++) {
-				output[0].word = LoadBuffer(temp_buf[0][i], 0).word;
-				output[1].word = LoadBuffer(temp_buf[1][i], 1).word; 
+				output[0].package.word = LoadBuffer(temp_buf[0][31-i], 0).package.word;
+				output[1].package.word = LoadBuffer(temp_buf[1][31-i], 1).package.word; 
 			}
 			main_iter=0;
 			BUSY_EN();
 			
 			
-			if (output[0].fault != -1 || output[1].fault != -1 || output[2].fault != -1 || output[3].fault != -1){
-				sprintf(data_buf, "data=%x %x %x %x\r\n", output[0].extraction.byte1, output[0].extraction.byte2, 
+			if (output[0].package.fault != -1 || output[1].package.fault != -1 || output[2].package.fault != -1 || output[3].package.fault != -1){
+				sprintf(data_buf, "%x%x%x%x", output[0].extraction.byte1, output[0].extraction.byte2, 
 				output[1].extraction.byte1, output[1].extraction.byte2);
-				for(i=0;i<40;i++)
+			  for(i=0;i<16;i++)
 				{
 					while(!(UART0->S1 & UART0_S1_TDRE_MASK));
 					UART0->D = data_buf[i];
@@ -207,17 +211,24 @@ void PORTB_IRQHandler(){
 void TPM0_IRQHandler() {	//Sygnal busy pojawia sie raz za razem, nie do konca rozumiem z czego to wynika
 	//kompletnie nie czeka na przejscie danych, przerwanie jest jednak z pewnoscia za wolne, nalezy popracowac nad 
 	//optymalizacja
-	if(PTB->PDIR & 0x01){ //sprawdzenie czy zbocze jest narastajace
+	
+	//PTB->PSOR |= 1<<RANGE;
+	if(!(PTB->PDIR & 0x01)){ //sprawdzenie czy zbocze jest narastajace
+		PTB->PSOR |= 1<<RANGE;
 	//temp_data_dout[0] = ((PTA->PDIR & 0x0080)>>(D_OUT_A-1));
 	//temp_data_dout[1] = ((PTA->PDIR & 0x0100)>>(D_OUT_B-1));
 	//temp_data_dout[2] = ((PTA->PDIR & 0x0200)>>(D_OUT_C-1));
 	//temp_data_dout[3] = ((PTA->PDIR & 0x0400)>>(D_OUT_D-1));
-	temp_buf[0][main_iter] = ((PTA->PDIR >>(D_OUT_A)) & 0x01);
+	temp_buf[0][main_iter] = ((PTA->PDIR >>(D_OUT_A)) & 0x01); //wjednej linii //FPTA szybsze
 	temp_buf[1][main_iter] = ((PTA->PDIR >>(D_OUT_B)) & 0x01);
 	data_ok = TRUE;
-	if(main_iter++>31) {ClockOFF(); CS_Off();}
+	main_iter++;
+	}
+	if(main_iter>31) {
+	ClockOFF(); CS_Off();
 	//if (output[0].fault != -1 || output[1].fault != -1 || output[2].fault != -1 || output[3].fault != -1) { 
 	}
+	PTB->PCOR |= 1<<RANGE;
 	//na poczatku sprawdzalismy czy fault != -1 zarowno w petli glownej jak i tutaj
 	//co sprawialo, ze wykonywal gdy dane jeszcze nie byly gotowe (w kolejnej iteracji)
 	//roznicy jednak nie dalo sie zauwazyc, bez uzycia oscyloskopu
