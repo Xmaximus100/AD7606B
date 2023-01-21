@@ -1,8 +1,8 @@
 from serial import Serial
 from time import sleep
 
-ser = Serial("COM3", 115200)
+ser = Serial("COM13", 115200)
 
 while True: 
-    x = ser.read(4)
+    x = ser.read().decode()
     print(x)

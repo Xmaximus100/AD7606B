@@ -100,6 +100,26 @@ void Set_DOUT(void){
 	PTA->PDDR |= 1<<SS;
 }
 
+
+/*
+data_ex2 LoadBuffer2(char data[][32]){
+	data_ex2 something = {};
+	
+	for(int i=0; i<32; i++) {
+				something.extraction.word1 |= data[0][31-i] << i;
+				something.extraction.word2 |= data[1][31-i] << i;
+			}
+	
+	return something;
+}
+*/
+
+
+
+
+
+
+
 data_ex LoadBuffer(char data, char block){
 	data_ex something;
 	buffer_ch[block] += data<<block_iter[block]; block_iter[block]++; 

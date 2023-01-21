@@ -53,6 +53,14 @@ typedef union{
 	} package;
 } data_ex;
 
+typedef union{
+	struct {
+		uint32_t word1;
+		uint32_t word2;
+	} word64;
+	char bytes[8];
+} data_ex2;
+
 void BUSY_Toggle(void);
 void BUSY_EN(void);
 void BUSY_DIS(void);
@@ -64,5 +72,6 @@ void ResetDiodeOFF(void);
 void Set_DOUT(void);
 data_ex LoadBuffer(char, char);
 data_ex Extract(uint32_t);
+//data_ex2 LoadBuffer2(char[][32]);
 
 
