@@ -101,45 +101,7 @@ void Set_DOUT(void){
 }
 
 
-/*
-data_ex2 LoadBuffer2(char data[][32]){
-	data_ex2 something = {};
-	
-	for(int i=0; i<32; i++) {
-				something.extraction.word1 |= data[0][31-i] << i;
-				something.extraction.word2 |= data[1][31-i] << i;
-			}
-	
-	return something;
-}
-*/
 
-
-
-
-
-
-
-data_ex LoadBuffer(char data, char block){
-	data_ex something;
-	buffer_ch[block] += data<<block_iter[block]; block_iter[block]++; 
-	if(block_iter[block]>31) {
-		block_iter[block] = 0;
-		something.package.word = buffer_ch[block];
-		buffer_ch[block] = 0;
-		return something;
-	}
-	something.package.fault = -1;
-	return something;
-}
-
-data_ex Extract(uint32_t word0){
-	data_ex something;
-	something.package.word = word0;
-	return something;
-}
-
-//bity WriteEnable=0, Read/~Write=0, ADD(5-0), MSB(7-0)
 
 uint16_t SetRegister(uint8_t address, uint8_t data){	
 	return ((address&0x3F)<<8) + (data&0xFF); 

@@ -40,18 +40,7 @@ typedef struct{
 	} config;
 } registers;
 
-typedef union{
-	struct{ //mozliwe ze przez wstawienie struktury nieanonimowej, unia stracila 
-		//mozliwosc sklejania bitow - trzeba sprawdzic
-		uint16_t byte1;
-		uint16_t byte2;
-		int8_t fault;
-	} extraction;
-	struct{
-	uint32_t word;
-	int8_t fault;
-	} package;
-} data_ex;
+
 
 typedef union{
 	struct {
@@ -70,8 +59,6 @@ void ResetDelay(void);
 void ResetDiodeON(void);
 void ResetDiodeOFF(void);
 void Set_DOUT(void);
-data_ex LoadBuffer(char, char);
-data_ex Extract(uint32_t);
-//data_ex2 LoadBuffer2(char[][32]);
+
 
 
