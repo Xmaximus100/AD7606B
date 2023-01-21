@@ -39,8 +39,8 @@ void TPM0_IRQHandler(void);
 void UART_Transmission(void);
 void AD7606_Set(uint8_t, uint8_t);
 
-char hello_word[]= {"hello"};;
-char sending_data[]= {"W"};;
+char hello_word[]= "hello";
+char sending_data[]= "W";
 
 void Send_uart(char data[], uint32_t size)
 {

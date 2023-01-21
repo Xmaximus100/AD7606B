@@ -27,6 +27,8 @@ void SetAddress(void){
 	reg.config.data = 0x10; 
 }
 
+
+//Wlaczenie/wylaczenie przerwania od pinu busy - to jest potrzebne bo na pin convst idzie sygnal cyklicznie co jakis czas
 void BUSY_Toggle(void)
 {
 	PORTB->PCR[BUSY] ^= PORT_PCR_IRQC(0xA);
