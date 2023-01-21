@@ -58,7 +58,10 @@ int main (void) {
 		CheckUART();
 		//if (sample_iter<samples_amount){
 			if (main_iter2>16){ //moze sie wyjebac i trzeba dac 16
-				Send_uart(sending_data, 12);
+				
+				// calosc trwa 600us
+				Send_uart(sending_data, 1);
+				PTB->PSOR |= 1<<RANGE;
 				main_iter=0;
 				main_iter2=0;
 				BUSY_EN();
@@ -66,6 +69,7 @@ int main (void) {
 				unionR.word64.word1 = 0;
 				unionR.word64.word2 = 0;
 					//sample_iter++;
+				PTB->PCOR |= 1<<RANGE;
 				}
 		//}
 		}
@@ -174,7 +178,9 @@ void PORTB_IRQHandler(){
 }
 
 void TPM0_IRQHandler() {
-	if(!(PTB->PDIR & 0x01)){ //sprawdzenie czy zbocze jest narastajace
+	if(!(PTB->PDIR & 0x01)){ //sprawdzenie czy zbocze jest narastajace 
+		//Ta funckja wykonuje sie ok 1,5us TO WAZNE!!!!
+		PTB->PSOR |= 1<<RANGE;
 		if (main_iter!=16) {
 			unionR.word64.word1 |= (((PTA->PDIR & 0x0300)>>(8)) << (main_iter*2));
 			main_iter++;
@@ -186,6 +192,7 @@ void TPM0_IRQHandler() {
 				ClockOFF(); CS_Off();
 			}
 		}
+		PTB->PCOR |= 1<<RANGE;
 	}
 	TPM0->CONTROLS[0].CnSC |= TPM_CnSC_CHF_MASK;
 }

@@ -10,8 +10,10 @@ void TPM0_Init(void) {
 	PORTB->PCR[SCK_TPM] = PORT_PCR_MUX(0x02);  
 	TPM0->SC |= TPM_SC_PS(0x01);
 	TPM0->SC |= TPM_SC_CMOD(0x01);
-	
-	TPM0->MOD = 0x0AFF;
+	//0XAFF DAJE NAM co 265us przerwanie czyli 3,75kHz 
+	TPM0->MOD = 0x08F; 
+	//MOD = 0x8F daje nam ok 73kHz i to jest bezpieczna wartosc
+	//
 	TPM0->SC &= ~TPM_SC_CPWMS_MASK;
 	TPM0->CONTROLS[0].CnSC &= ~ (TPM_CnSC_ELSB_MASK | TPM_CnSC_MSB_MASK);
 	TPM0->CONTROLS[0].CnSC |= (TPM_CnSC_ELSA_MASK | TPM_CnSC_MSA_MASK);  
