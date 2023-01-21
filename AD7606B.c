@@ -61,8 +61,9 @@ void AD7606B_Init(void){
 	//PORTA->PCR[FIRSTDATA] = PORT_PCR_MUX(1);
 	
 	PORTB->PCR[BUSY] |= 	PORT_PCR_IRQC(0xA);
-	
-	
+	//
+
+	//
 	PTB->PDDR |= 1<<RANGE; //ustawianie B7 jako RANGE, wywala przerwania na zegarze
 	PTB->PDDR |= 1<<REFSEL;
 	PTB->PDDR |= 1<<_PAR_SER;

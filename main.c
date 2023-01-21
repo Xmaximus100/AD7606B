@@ -59,17 +59,20 @@ int main (void) {
 		//if (sample_iter<samples_amount){
 			if (main_iter2>16){ //moze sie wyjebac i trzeba dac 16
 				
-				// calosc trwa 600us
-				Send_uart(sending_data, 1);
-				PTB->PSOR |= 1<<RANGE;
+				// calosc wysylania 64 bitow z baudrate 115k trwa 600us
+				//Send_uart(sending_data, 1);
+				
 				main_iter=0;
 				main_iter2=0;
-				BUSY_EN();
+				PTB->PSOR |= 1<<RANGE;
 				Send_uart(unionR.bytes, 8);
+				PTB->PCOR |= 1<<RANGE;
 				unionR.word64.word1 = 0;
 				unionR.word64.word2 = 0;
+				Reset(0x22);
+				BUSY_EN();
 					//sample_iter++;
-				PTB->PCOR |= 1<<RANGE;
+				
 				}
 		//}
 		}
@@ -79,7 +82,7 @@ void CommunicationSetup(){
 	AD7606B_Init();
 	ResetDelay();
 	SPI0_Init();
-	AD7606_Set(0x02,0x10);
+	AD7606_Set(0x02,0x00); //Tu bylo 0x10 ale to jakos magicznie wlaczalo oversampling
 	for(int i=0;i<100;i++);
 	AD7606_Set(0x03,0x0);
 	for(int i=0;i<100;i++);
@@ -100,14 +103,15 @@ void Reset(char value){
 	for(int i=0; i<10000;i++);
 	ResetDiodeOFF();
 	SPI0_Init();
-	AD7606_Set(0x02,0x10);
+	//AD7606_Set(0x02,0x10);
+	AD7606_Set(0x02,0x00);
 	for(int i=0;i<100;i++);
 	AD7606_Set(0x03,value);
 	for(int i=0;i<100;i++);
 	AD7606_Set(0x04,value);
 	for(int i=0;i<100;i++);
 	Set_DOUT(); 
-	ClockON();
+	//ClockON();
 	CONVST_ON();
 	BUSY_EN();
 }
@@ -180,7 +184,7 @@ void PORTB_IRQHandler(){
 void TPM0_IRQHandler() {
 	if(!(PTB->PDIR & 0x01)){ //sprawdzenie czy zbocze jest narastajace 
 		//Ta funckja wykonuje sie ok 1,5us TO WAZNE!!!!
-		PTB->PSOR |= 1<<RANGE;
+		//PTB->PSOR |= 1<<RANGE;
 		if (main_iter!=16) {
 			unionR.word64.word1 |= (((PTA->PDIR & 0x0300)>>(8)) << (main_iter*2));
 			main_iter++;
@@ -192,7 +196,7 @@ void TPM0_IRQHandler() {
 				ClockOFF(); CS_Off();
 			}
 		}
-		PTB->PCOR |= 1<<RANGE;
+		//PTB->PCOR |= 1<<RANGE;
 	}
 	TPM0->CONTROLS[0].CnSC |= TPM_CnSC_CHF_MASK;
 }

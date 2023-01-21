@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\Osciloscope.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\Osciloscope.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Sat Jan 21 21:29:36 2023
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Sat Jan 21 23:06:20 2023
 <BR><P>
 <H3>Maximum Stack Usage =         40 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -346,7 +346,7 @@ Global Symbols
 <P><STRONG><a name="[85]"></a>__aeabi_uidiv</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, aeabi_sdiv.o(.text), UNUSED)
 
 <P><STRONG><a name="[5e]"></a>__aeabi_uidivmod</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, aeabi_sdiv.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART0_Init
+<BR><BR>[Called By]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART0_Init
 </UL>
 
 <P><STRONG><a name="[86]"></a>__aeabi_idiv</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, aeabi_sdiv.o(.text), UNUSED)
@@ -400,84 +400,87 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI0_Write
 </UL>
-<BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
-<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
+<BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
 </UL>
 
 <P><STRONG><a name="[8f]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size 16 bytes, indicate_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[4b]"></a>BUSY_DIS</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, ad7606b.o(i.BUSY_DIS))
-<BR><BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+<P><STRONG><a name="[4d]"></a>BUSY_DIS</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, ad7606b.o(i.BUSY_DIS))
+<BR><BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
 <LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORTB_IRQHandler
-<LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckUART
+<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckUART
 </UL>
 
 <P><STRONG><a name="[5b]"></a>BUSY_EN</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, ad7606b.o(i.BUSY_EN))
 <BR><BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
-<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
 </UL>
 
-<P><STRONG><a name="[49]"></a>BUSY_Toggle</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, ad7606b.o(i.BUSY_Toggle))
-<BR><BR>[Called By]<UL><LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckUART
+<P><STRONG><a name="[4b]"></a>BUSY_Toggle</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, ad7606b.o(i.BUSY_Toggle))
+<BR><BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckUART
 </UL>
 
-<P><STRONG><a name="[57]"></a>CONVST_OFF</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, tpm.o(i.CONVST_OFF))
-<BR><BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+<P><STRONG><a name="[58]"></a>CONVST_OFF</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, tpm.o(i.CONVST_OFF))
+<BR><BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
 </UL>
 
-<P><STRONG><a name="[5a]"></a>CONVST_ON</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, tpm.o(i.CONVST_ON))
-<BR><BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+<P><STRONG><a name="[45]"></a>CONVST_ON</STRONG> (Thumb, 8 bytes, Stack size 4 bytes, tpm.o(i.CONVST_ON))
+<BR><BR>[Stack]<UL><LI>Max Depth = 4<LI>Call Chain = CONVST_ON
+</UL>
+<BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TPM1_Init
+</UL>
+<BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+</UL>
+
+<P><STRONG><a name="[47]"></a>AD7606B_Init</STRONG> (Thumb, 242 bytes, Stack size 8 bytes, ad7606b.o(i.AD7606B_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = AD7606B_Init &rArr; __NVIC_SetPriority
+</UL>
+<BR>[Calls]<UL><LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetAddress
+<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_SetPriority
+</UL>
+<BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
 </UL>
 
 <P><STRONG><a name="[5c]"></a>CS_Off</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, spi.o(i.CS_Off))
 <BR><BR>[Called By]<UL><LI><a href="#[1c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TPM0_IRQHandler
 </UL>
 
-<P><STRONG><a name="[54]"></a>CS_On</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, spi.o(i.CS_On))
+<P><STRONG><a name="[55]"></a>CS_On</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, spi.o(i.CS_On))
 <BR><BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORTB_IRQHandler
 </UL>
 
-<P><STRONG><a name="[45]"></a>AD7606B_Init</STRONG> (Thumb, 242 bytes, Stack size 8 bytes, ad7606b.o(i.AD7606B_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = AD7606B_Init &rArr; __NVIC_SetPriority
-</UL>
-<BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetAddress
-<LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_SetPriority
-</UL>
-<BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
-</UL>
-
-<P><STRONG><a name="[48]"></a>CheckUART</STRONG> (Thumb, 142 bytes, Stack size 8 bytes, main.o(i.CheckUART))
+<P><STRONG><a name="[4a]"></a>CheckUART</STRONG> (Thumb, 142 bytes, Stack size 8 bytes, main.o(i.CheckUART))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = CheckUART &rArr; Reset &rArr; AD7606_Set
 </UL>
-<BR>[Calls]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ClockOFF
-<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUSY_Toggle
-<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUSY_DIS
-<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ClockOFF
+<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUSY_Toggle
+<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUSY_DIS
+<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[4a]"></a>ClockOFF</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, tpm.o(i.ClockOFF))
+<P><STRONG><a name="[4c]"></a>ClockOFF</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, tpm.o(i.ClockOFF))
 <BR><BR>[Called By]<UL><LI><a href="#[1c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TPM0_IRQHandler
-<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
-<LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckUART
+<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckUART
 </UL>
 
-<P><STRONG><a name="[55]"></a>ClockON</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, tpm.o(i.ClockON))
-<BR><BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
-<LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORTB_IRQHandler
+<P><STRONG><a name="[56]"></a>ClockON</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, tpm.o(i.ClockON))
+<BR><BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORTB_IRQHandler
 </UL>
 
-<P><STRONG><a name="[4d]"></a>CommunicationSetup</STRONG> (Thumb, 86 bytes, Stack size 8 bytes, main.o(i.CommunicationSetup))
+<P><STRONG><a name="[4f]"></a>CommunicationSetup</STRONG> (Thumb, 86 bytes, Stack size 8 bytes, main.o(i.CommunicationSetup))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = CommunicationSetup &rArr; UART0_Init &rArr; __NVIC_SetPriority
 </UL>
-<BR>[Calls]<UL><LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART0_Init
-<LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TPM1_Init
-<LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TPM0_Init
-<LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_DOUT
-<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI0_Init
-<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ResetDelay
-<LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD7606B_Init
+<BR>[Calls]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART0_Init
+<LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TPM1_Init
+<LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TPM0_Init
+<LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_DOUT
+<LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI0_Init
+<LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ResetDelay
+<LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD7606B_Init
 <LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD7606_Set
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -486,48 +489,48 @@ Global Symbols
 <P><STRONG><a name="[2a]"></a>PORTB_IRQHandler</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, main.o(i.PORTB_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = PORTB_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ClockON
-<LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CS_On
-<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUSY_DIS
-<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_EnableIRQ
+<BR>[Calls]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ClockON
+<LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CS_On
+<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUSY_DIS
+<LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_EnableIRQ
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_mkl05z4.o(RESET)
 </UL>
-<P><STRONG><a name="[4c]"></a>Reset</STRONG> (Thumb, 116 bytes, Stack size 8 bytes, main.o(i.Reset))
+<P><STRONG><a name="[4e]"></a>Reset</STRONG> (Thumb, 112 bytes, Stack size 8 bytes, main.o(i.Reset))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = Reset &rArr; AD7606_Set
 </UL>
-<BR>[Calls]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_DOUT
-<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI0_Init
-<LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ResetDiodeON
-<LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ResetDiodeOFF
-<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ResetDelay
-<LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ClockON
-<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ClockOFF
-<LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CONVST_ON
-<LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CONVST_OFF
+<BR>[Calls]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_DOUT
+<LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI0_Init
+<LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ResetDiodeON
+<LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ResetDiodeOFF
+<LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ResetDelay
+<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ClockOFF
+<LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CONVST_ON
+<LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CONVST_OFF
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUSY_EN
-<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUSY_DIS
+<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUSY_DIS
 <LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD7606_Set
 </UL>
-<BR>[Called By]<UL><LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckUART
+<BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckUART
 </UL>
 
-<P><STRONG><a name="[4e]"></a>ResetDelay</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, ad7606b.o(i.ResetDelay))
-<BR><BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
-<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
+<P><STRONG><a name="[50]"></a>ResetDelay</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, ad7606b.o(i.ResetDelay))
+<BR><BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
 </UL>
 
-<P><STRONG><a name="[59]"></a>ResetDiodeOFF</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, ad7606b.o(i.ResetDiodeOFF))
-<BR><BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+<P><STRONG><a name="[5a]"></a>ResetDiodeOFF</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, ad7606b.o(i.ResetDiodeOFF))
+<BR><BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
 </UL>
 
-<P><STRONG><a name="[58]"></a>ResetDiodeON</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, ad7606b.o(i.ResetDiodeON))
-<BR><BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+<P><STRONG><a name="[59]"></a>ResetDiodeON</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, ad7606b.o(i.ResetDiodeON))
+<BR><BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
 </UL>
 
-<P><STRONG><a name="[4f]"></a>SPI0_Init</STRONG> (Thumb, 84 bytes, Stack size 0 bytes, spi.o(i.SPI0_Init))
-<BR><BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
-<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
+<P><STRONG><a name="[51]"></a>SPI0_Init</STRONG> (Thumb, 84 bytes, Stack size 0 bytes, spi.o(i.SPI0_Init))
+<BR><BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
 </UL>
 
 <P><STRONG><a name="[44]"></a>SPI0_Write</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, spi.o(i.SPI0_Write))
@@ -538,61 +541,63 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[46]"></a>SetAddress</STRONG> (Thumb, 78 bytes, Stack size 0 bytes, ad7606b.o(i.SetAddress))
-<BR><BR>[Called By]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD7606B_Init
+<P><STRONG><a name="[48]"></a>SetAddress</STRONG> (Thumb, 78 bytes, Stack size 0 bytes, ad7606b.o(i.SetAddress))
+<BR><BR>[Called By]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD7606B_Init
 </UL>
 
-<P><STRONG><a name="[50]"></a>Set_DOUT</STRONG> (Thumb, 116 bytes, Stack size 0 bytes, ad7606b.o(i.Set_DOUT))
-<BR><BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
-<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
+<P><STRONG><a name="[52]"></a>Set_DOUT</STRONG> (Thumb, 116 bytes, Stack size 0 bytes, ad7606b.o(i.Set_DOUT))
+<BR><BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
 </UL>
 
 <P><STRONG><a name="[2b]"></a>SystemInit</STRONG> (Thumb, 78 bytes, Stack size 0 bytes, system_mkl05z4.o(i.SystemInit))
 <BR>[Address Reference Count : 1]<UL><LI> startup_mkl05z4.o(.text)
 </UL>
-<P><STRONG><a name="[1c]"></a>TPM0_IRQHandler</STRONG> (Thumb, 162 bytes, Stack size 8 bytes, main.o(i.TPM0_IRQHandler))
+<P><STRONG><a name="[1c]"></a>TPM0_IRQHandler</STRONG> (Thumb, 138 bytes, Stack size 8 bytes, main.o(i.TPM0_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = TPM0_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ClockOFF
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ClockOFF
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CS_Off
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_mkl05z4.o(RESET)
 </UL>
-<P><STRONG><a name="[52]"></a>TPM0_Init</STRONG> (Thumb, 182 bytes, Stack size 8 bytes, tpm.o(i.TPM0_Init))
+<P><STRONG><a name="[54]"></a>TPM0_Init</STRONG> (Thumb, 182 bytes, Stack size 8 bytes, tpm.o(i.TPM0_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = TPM0_Init &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_SetPriority
 </UL>
-<BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
+<BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
 </UL>
 
-<P><STRONG><a name="[53]"></a>TPM1_Init</STRONG> (Thumb, 124 bytes, Stack size 0 bytes, tpm.o(i.TPM1_Init))
-<BR><BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
+<P><STRONG><a name="[46]"></a>TPM1_Init</STRONG> (Thumb, 122 bytes, Stack size 0 bytes, tpm.o(i.TPM1_Init))
+<BR><BR>[Called By]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CONVST_ON
+<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
 </UL>
 
 <P><STRONG><a name="[17]"></a>UART0_IRQHandler</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, main.o(i.UART0_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = UART0_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_EnableIRQ
+<BR>[Calls]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_EnableIRQ
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_mkl05z4.o(RESET)
 </UL>
-<P><STRONG><a name="[51]"></a>UART0_Init</STRONG> (Thumb, 218 bytes, Stack size 24 bytes, uart0.o(i.UART0_Init))
+<P><STRONG><a name="[53]"></a>UART0_Init</STRONG> (Thumb, 218 bytes, Stack size 24 bytes, uart0.o(i.UART0_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = UART0_Init &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_SetPriority
 </UL>
-<BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
+<BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
 </UL>
 
-<P><STRONG><a name="[3a]"></a>main</STRONG> (Thumb, 90 bytes, Stack size 0 bytes, main.o(i.main))
+<P><STRONG><a name="[3a]"></a>main</STRONG> (Thumb, 88 bytes, Stack size 0 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = main &rArr; CommunicationSetup &rArr; UART0_Init &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUSY_EN
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Send_uart
-<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
-<LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckUART
+<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset
+<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
+<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckUART
 </UL>
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
@@ -600,27 +605,27 @@ Global Symbols
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[56]"></a>__NVIC_EnableIRQ</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, main.o(i.__NVIC_EnableIRQ))
+<P><STRONG><a name="[57]"></a>__NVIC_EnableIRQ</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, main.o(i.__NVIC_EnableIRQ))
 <BR><BR>[Called By]<UL><LI><a href="#[17]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART0_IRQHandler
 <LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORTB_IRQHandler
 </UL>
 
-<P><STRONG><a name="[47]"></a>__NVIC_SetPriority</STRONG> (Thumb, 110 bytes, Stack size 8 bytes, ad7606b.o(i.__NVIC_SetPriority))
+<P><STRONG><a name="[49]"></a>__NVIC_SetPriority</STRONG> (Thumb, 110 bytes, Stack size 8 bytes, ad7606b.o(i.__NVIC_SetPriority))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __NVIC_SetPriority
 </UL>
-<BR>[Called By]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD7606B_Init
+<BR>[Called By]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD7606B_Init
 </UL>
 
 <P><STRONG><a name="[5d]"></a>__NVIC_SetPriority</STRONG> (Thumb, 110 bytes, Stack size 8 bytes, tpm.o(i.__NVIC_SetPriority))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __NVIC_SetPriority
 </UL>
-<BR>[Called By]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TPM0_Init
+<BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TPM0_Init
 </UL>
 
 <P><STRONG><a name="[5f]"></a>__NVIC_SetPriority</STRONG> (Thumb, 110 bytes, Stack size 8 bytes, uart0.o(i.__NVIC_SetPriority))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __NVIC_SetPriority
 </UL>
-<BR>[Called By]<UL><LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART0_Init
+<BR>[Called By]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART0_Init
 </UL>
 <P>
 <H3>

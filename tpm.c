@@ -39,11 +39,11 @@ void TPM1_Init(void) {
 	czyli dla SC_PS 0x7 czyli prescaler 128 oraz MOD 0xF000
 	mamy (128*61440)/42MHz = 187ms
 	*/
-	TPM1->SC |= TPM_SC_PS(0x07); //ustawienie prescaller'a
-	TPM1->SC |= TPM_SC_CMOD(0x01);
+	TPM1->SC |= TPM_SC_PS(0x07); //ustawienie prescaller'a ma byc 0x7
+	TPM1->SC |= TPM_SC_CMOD(0x01); 
 	TPM1->CNT = 0x0000;
-	TPM1->MOD = 0xF000; 
-	TPM1->CONTROLS[0].CnV = 0xA000;
+	TPM1->MOD = 0x19A; //zostawic 0x19A
+	TPM1->CONTROLS[0].CnV = 0x0FA; // oraz 0xfa
 	
 	TPM1->SC &= ~TPM_SC_CPWMS_MASK; 
 	TPM1->CONTROLS[0].CnSC |= (TPM_CnSC_ELSB_MASK | TPM_CnSC_MSB_MASK | TPM_CnSC_MSA_MASK);
@@ -66,8 +66,14 @@ void ClockOFF(void){ //wyzwolic przy odczytaniu pelnego bufora 32bity
 void CONVST_OFF(void){
 	TPM1->CNT = 0x0000;
 	TPM1->SC &=  ~TPM_SC_CMOD(0x01);
+	//Ustawienie pinu CONV na stan wysoki zeby w trakcie wylaczenia pin nie wisial w powietrzu bo wtedy sie randomowo wykonuja pomiary
+	PORTA->PCR[12] = PORT_PCR_MUX(1);
+	PTA->PDDR |= 1<<12; 
+	PTA->PSOR |= 1<<12; //SET
+	
 }
 
 void CONVST_ON(void){
-	TPM1->SC |=  TPM_SC_CMOD(0x01);
+	//TPM1->SC |=  TPM_SC_CMOD(0x01);
+	TPM1_Init();
 }
