@@ -55,7 +55,7 @@ void BUSY_EN(void);
 void BUSY_DIS(void);
 void SetAddress(void);
 void AD7606B_Init(void);
-void ResetDelay(void);
+void Reset_ADC(void);
 void ResetDiodeON(void);
 void ResetDiodeOFF(void);
 void Set_DOUT(void);

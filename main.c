@@ -29,6 +29,7 @@ char rx_buf[16];
 data_ex2 unionR = {0}; 
 uint8_t i =0;
 
+void adc_config(uint8_t, uint8_t);
 void CommunicationSetup(void);
 void Reset(char value);
 void CheckUART(void);
@@ -69,7 +70,9 @@ int main (void) {
 				PTB->PCOR |= 1<<RANGE;
 				unionR.word64.word1 = 0;
 				unionR.word64.word2 = 0;
-				//Reset(0x00);
+				//adc_config(0x02,0x10); // ustawienei zeby dane szly na 4 wyjscia dout
+				//adc_config(0x03,0x00); //ustawienie zakresu napiec na +/- 2.5V
+				//adc_config(0x04,0x00); //ustawienie zakresu napiec na +/- 2.5V
 				BUSY_EN();
 					//sample_iter++;
 				
@@ -78,42 +81,79 @@ int main (void) {
 		}
 }
 
+void SPI_ON(void)
+{
+	BUSY_DIS();    //wylaczenie przerwania na pinie busy
+	ClockOFF();    //wylaczenie timera do SCK software'owy
+	CONVST_OFF();  //wylaczenie timera wywolujacego przerwanie na convst
+	SPI0_Init();   //Inicjalizacja SPI hardwarowego
+	CS_On();       //stan niski na pinie CS
+}
+
+void SPI_OFF()
+{
+	CS_Off();      //stan wysoki na pinie CS
+	Set_DOUT();    //ustawienie pinow dout oraz SPI na I/O
+	SDI_config();  //ustawienie pinu SDI w stan niski  po zakonczeniu rozmow po SPI
+	CONVST_ON();   //wylaczenie timera wywolujacego przerwanie na convst
+	BUSY_EN();     //wlaczenie przerwania na pinie busy
+}
+
+void delay()
+{
+	volatile int cokolwiek = 0;
+	for(int i=0;i<3000;i++)
+	{
+		cokolwiek ++;
+	}
+}
+
+void adc_config(uint8_t addres, uint8_t value)
+{
+	SPI_ON();
+	SPI0_Write(addres,value); // 1 dout 
+	delay();
+	//for(int i=0;i<3000;i++); //delay
+	SPI_OFF();
+	delay();
+}
+
+
+
 void CommunicationSetup(){
 	AD7606B_Init();
-	ResetDelay();
-	SPI0_Init();
-	AD7606_Set(0x02,0x10); //Tu bylo 0x10 ale to jakos magicznie wlaczalo oversampling
-	for(int i=0;i<3000;i++);
-	AD7606_Set(0x03,0x00);
-	for(int i=0;i<3000;i++);
-	AD7606_Set(0x04,0x00);
-	for(int i=0;i<3000;i++);
-	Set_DOUT();
-	
-	SDI_config(); //ustawienie pinu SDI w stan niski  po zakonczeniu rozmow po SPI
-		
 	UART0_Init();
 	TPM0_Init();
 	TPM1_Init();
+	SPI_OFF();
+	//Reset_ADC();
+	//SPI0_Init();
+	//adc_config(0x02,0x10); // ustawienei zeby dane szly na 4 wyjscia dout
+	//adc_config(0x03,0x00); //ustawienie zakresu napiec na +/- 2.5V
+	//adc_config(0x04,0x00); //ustawienie zakresu napiec na +/- 2.5V
+	//Set_DOUT();
+
 }
 
 void Reset(char value){
 	BUSY_DIS();
 	ClockOFF();
 	CONVST_OFF();
-	//ResetDelay(); //reset adc nie jest potrzebny
+	//Reset_ADC(); //reset adc nie jest potrzebny
 	ResetDiodeON(); //zapalenie ledem czerwonym
 	//for(int i=0; i<10000;i++); //nie wiem po co to bylo
 	SPI0_Init();
 	CS_On();
 	AD7606_Set(0x02,0x10); // 1 dout 
 	//AD7606_Set(0x02,0x10); // 4 dout - poprawny
-	
-	for(int i=0;i<3000;i++);
+	delay();
+	//for(int i=0;i<3000;i++);
 	AD7606_Set(0x03,value);
-	for(int i=0;i<3000;i++);
+	//for(int i=0;i<3000;i++);
+	delay();
 	AD7606_Set(0x04,value);
-	for(int i=0;i<3000;i++);
+	//for(int i=0;i<3000;i++);
+	delay();
 	CS_Off();
 	ResetDiodeOFF();
 	Set_DOUT(); 

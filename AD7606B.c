@@ -95,10 +95,6 @@ void Set_DOUT(void){
 	PORTA->PCR[D_OUT_A] &= ~(PORT_PCR_PS_MASK);
 	PORTA->PCR[D_OUT_B] = (PORT_PCR_MUX(0x01) | PORT_PCR_PE_MASK);
 	PORTA->PCR[D_OUT_B] &= ~(PORT_PCR_PS_MASK);
-	PORTA->PCR[D_OUT_C] = (PORT_PCR_MUX(0x01) | PORT_PCR_PE_MASK);
-	PORTA->PCR[D_OUT_C] &= ~(PORT_PCR_PS_MASK);
-	PORTA->PCR[D_OUT_D] = (PORT_PCR_MUX(0x01) | PORT_PCR_PE_MASK);
-	PORTA->PCR[D_OUT_D] &= ~(PORT_PCR_PS_MASK);
 	
 	PTA->PDDR |= 1<<SS;
 }
@@ -111,7 +107,7 @@ uint16_t SetRegister(uint8_t address, uint8_t data){
 }	
 
 //error: busy - opadajace, a pojawiaja sie dane
-void ResetDelay(void){
+void Reset_ADC(void){
 	PTB->PSOR |= 1<<ADC_RESET;
 	for(int i=0;i<1000;i++); //~170us
 	PTB->PCOR |= 1<<ADC_RESET;
