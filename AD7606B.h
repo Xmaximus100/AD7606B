@@ -5,7 +5,7 @@
 // Zródlo zegara
 //
 #define REFSEL				6
-#define VDRIVE				10
+#define ADC_RESET			10
 #define _PAR_SER			5
 #define BUSY					3
 #define CONTROL_DIODE	8
@@ -40,18 +40,15 @@ typedef struct{
 	} config;
 } registers;
 
+
+
 typedef union{
-	struct{ //mozliwe ze przez wstawienie struktury nieanonimowej, unia stracila 
-		//mozliwosc sklejania bitow - trzeba sprawdzic
-		uint16_t byte1;
-		uint16_t byte2;
-		int8_t fault;
-	} extraction;
-	struct{
-	uint32_t word;
-	int8_t fault;
-	} package;
-} data_ex;
+	struct {
+		uint32_t word1;
+		uint32_t word2;
+	} word64;
+	char bytes[8];
+} data_ex2;
 
 void BUSY_Toggle(void);
 void BUSY_EN(void);
@@ -62,7 +59,7 @@ void ResetDelay(void);
 void ResetDiodeON(void);
 void ResetDiodeOFF(void);
 void Set_DOUT(void);
-data_ex LoadBuffer(char, char);
-data_ex Extract(uint32_t);
+void SDI_config(void);
+
 
 
