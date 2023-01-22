@@ -83,7 +83,7 @@ void SPI_ON(void)
 {
 	BUSY_DIS();    //wylaczenie przerwania na pinie busy
 	ClockOFF();    //wylaczenie timera do SCK software'owy
-	CONVST_OFF();  //wylaczenie timera wywolujacego przerwanie na convst
+	//CONVST_OFF();  //wylaczenie timera wywolujacego przerwanie na convst
 	SPI0_Init();   //Inicjalizacja SPI hardwarowego
 	CS_On();       //stan niski na pinie CS
 }
@@ -93,7 +93,7 @@ void SPI_OFF()
 	CS_Off();      //stan wysoki na pinie CS
 	Set_DOUT();    //ustawienie pinow dout oraz SPI na I/O
 	SDI_config();  //ustawienie pinu SDI w stan niski  po zakonczeniu rozmow po SPI
-	CONVST_ON();   //wylaczenie timera wywolujacego przerwanie na convst
+	//CONVST_ON();   //wylaczenie timera wywolujacego przerwanie na convst
 	BUSY_EN();     //wlaczenie przerwania na pinie busy
 }
 
@@ -128,6 +128,8 @@ void CommunicationSetup(){
 	adc_config(0x02,0x10); // ustawienei zeby dane szly na 4 wyjscia dout
 	adc_config(0x03,0x00); //ustawienie zakresu napiec na +/- 2.5V
 	adc_config(0x04,0x00); //ustawienie zakresu napiec na +/- 2.5V
+	delay();
+	//TPM1_freq(100);
 }
 /*
 void Reset(char value){

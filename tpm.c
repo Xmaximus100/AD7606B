@@ -25,6 +25,8 @@ void TPM0_Init(void) {
 
 }
 //TPM1 STERUJE PINEM CONVST DO WYTKONANIA POMIARU PRZEZ ADC'KA
+
+uint32_t TPM1_MOD=0x19A;
 void TPM1_Init(void) {
 		
   SIM->SCGC6 |= SIM_SCGC6_TPM1_MASK;		
@@ -42,8 +44,22 @@ void TPM1_Init(void) {
 	TPM1->SC |= TPM_SC_PS(0x07); //ustawienie prescaller'a ma byc 0x7
 	TPM1->SC |= TPM_SC_CMOD(0x01); 
 	TPM1->CNT = 0x0000;
-	TPM1->MOD = 0x19A; //zostawic 0x19A
-	TPM1->CONTROLS[0].CnV = 0x0FA; // oraz 0xfa
+	TPM1->MOD = 0X19A; //zostawic 0x19A
+	TPM1->CONTROLS[0].CnV = 0xfa; // oraz 0xfa
+	//TPM1->CONTROLS[0].CnV = TPM1_MOD; // oraz 0xfa
+	TPM1->SC &= ~TPM_SC_CPWMS_MASK; 
+	TPM1->CONTROLS[0].CnSC |= (TPM_CnSC_ELSB_MASK | TPM_CnSC_MSB_MASK | TPM_CnSC_MSA_MASK);
+	TPM1->CONTROLS[0].CnSC &= ~(TPM_CnSC_ELSA_MASK);
+}
+uint32_t fclk = 41943040;
+
+
+void TPM1_freq(uint32_t target_freq)
+{
+	TPM1_MOD = fclk/(128*target_freq);
+	//TPM1->CONTROLS[0].CnV = TPM1_MOD;
+	TPM1->MOD = TPM1_MOD;
+	TPM1->CONTROLS[0].CnV = (TPM1_MOD-0x10); // oraz 0xfa
 	
 	TPM1->SC &= ~TPM_SC_CPWMS_MASK; 
 	TPM1->CONTROLS[0].CnSC |= (TPM_CnSC_ELSB_MASK | TPM_CnSC_MSB_MASK | TPM_CnSC_MSA_MASK);

@@ -11,4 +11,5 @@ void ClockON(void);
 void ClockOFF(void);
 void CONVST_ON(void);
 void CONVST_OFF(void);
+void TPM1_freq(uint32_t);
 
