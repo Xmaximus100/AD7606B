@@ -5,7 +5,7 @@
 // Zródlo zegara
 //
 #define REFSEL				6
-#define VDRIVE				10
+#define ADC_RESET			10
 #define _PAR_SER			5
 #define BUSY					3
 #define CONTROL_DIODE	8
@@ -59,6 +59,7 @@ void ResetDelay(void);
 void ResetDiodeON(void);
 void ResetDiodeOFF(void);
 void Set_DOUT(void);
+void SDI_config(void);
 
 
 

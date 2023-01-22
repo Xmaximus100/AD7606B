@@ -69,7 +69,7 @@ int main (void) {
 				PTB->PCOR |= 1<<RANGE;
 				unionR.word64.word1 = 0;
 				unionR.word64.word2 = 0;
-				Reset(0x22);
+				//Reset(0x00);
 				BUSY_EN();
 					//sample_iter++;
 				
@@ -82,13 +82,16 @@ void CommunicationSetup(){
 	AD7606B_Init();
 	ResetDelay();
 	SPI0_Init();
-	AD7606_Set(0x02,0x00); //Tu bylo 0x10 ale to jakos magicznie wlaczalo oversampling
-	for(int i=0;i<100;i++);
-	AD7606_Set(0x03,0x0);
-	for(int i=0;i<100;i++);
-	AD7606_Set(0x04,0x0);
-	for(int i=0;i<100;i++);
-	Set_DOUT(); 
+	AD7606_Set(0x02,0x10); //Tu bylo 0x10 ale to jakos magicznie wlaczalo oversampling
+	for(int i=0;i<3000;i++);
+	AD7606_Set(0x03,0x00);
+	for(int i=0;i<3000;i++);
+	AD7606_Set(0x04,0x00);
+	for(int i=0;i<3000;i++);
+	Set_DOUT();
+	
+	SDI_config(); //ustawienie pinu SDI w stan niski  po zakonczeniu rozmow po SPI
+		
 	UART0_Init();
 	TPM0_Init();
 	TPM1_Init();
@@ -98,22 +101,27 @@ void Reset(char value){
 	BUSY_DIS();
 	ClockOFF();
 	CONVST_OFF();
-	ResetDelay();
-	ResetDiodeON();
-	for(int i=0; i<10000;i++);
-	ResetDiodeOFF();
+	//ResetDelay(); //reset adc nie jest potrzebny
+	ResetDiodeON(); //zapalenie ledem czerwonym
+	//for(int i=0; i<10000;i++); //nie wiem po co to bylo
 	SPI0_Init();
-	//AD7606_Set(0x02,0x10);
-	AD7606_Set(0x02,0x00);
-	for(int i=0;i<100;i++);
+	CS_On();
+	AD7606_Set(0x02,0x10); // 1 dout 
+	//AD7606_Set(0x02,0x10); // 4 dout - poprawny
+	
+	for(int i=0;i<3000;i++);
 	AD7606_Set(0x03,value);
-	for(int i=0;i<100;i++);
+	for(int i=0;i<3000;i++);
 	AD7606_Set(0x04,value);
-	for(int i=0;i<100;i++);
+	for(int i=0;i<3000;i++);
+	CS_Off();
+	ResetDiodeOFF();
 	Set_DOUT(); 
+	SDI_config();  //ustawienie pinu SDI w stan niski  po zakonczeniu rozmow po SPI
 	//ClockON();
 	CONVST_ON();
 	BUSY_EN();
+	
 }
 
 void AD7606_Set(uint8_t address, uint8_t data){

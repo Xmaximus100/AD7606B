@@ -49,7 +49,7 @@ void AD7606B_Init(void){
 	SetAddress();
 	SIM->SCGC5 |= (SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK); 
 	PORTB->PCR[REFSEL] = PORT_PCR_MUX(1);		
-	PORTB->PCR[VDRIVE] = PORT_PCR_MUX(1);	
+	PORTB->PCR[ADC_RESET] = PORT_PCR_MUX(1);	
 	PORTB->PCR[BUSY] = PORT_PCR_MUX(1);
 	PORTB->PCR[_PAR_SER] = PORT_PCR_MUX(1);
 	PORTB->PCR[RANGE] = PORT_PCR_MUX(1);
@@ -68,7 +68,7 @@ void AD7606B_Init(void){
 	PTB->PDDR |= 1<<REFSEL;
 	PTB->PDDR |= 1<<_PAR_SER;
 	FPTB->PDDR |= 1<<CONTROL_DIODE;
-	PTB->PDDR |= 1<<VDRIVE;
+	PTB->PDDR |= 1<<ADC_RESET;
 	//PTB->PDDR |= ~(1<<_PAR_SER); //is input when reset
 	PTB->PDDR &= ~(1<<BUSY); //is input when reset
 	
@@ -76,7 +76,7 @@ void AD7606B_Init(void){
 	FPTB->PSOR |= 1<<CONTROL_DIODE;
 	PTB->PSOR |= 1<<REFSEL;	
 	PTB->PSOR |= 1<<_PAR_SER;
-	PTB->PCOR |= 1<<VDRIVE;	//przy resecie pin ma wartosc ~1V
+	PTB->PCOR |= 1<<ADC_RESET;	//przy resecie pin ma wartosc ~1V
 	
 	NVIC_ClearPendingIRQ(PORTB_IRQn);				/* Clear NVIC any pending interrupts on PORTC_B */
 	NVIC_EnableIRQ(PORTB_IRQn);							/* Enable NVIC interrupts source for PORTC_B module */
@@ -112,10 +112,16 @@ uint16_t SetRegister(uint8_t address, uint8_t data){
 
 //error: busy - opadajace, a pojawiaja sie dane
 void ResetDelay(void){
-	PTB->PSOR |= 1<<VDRIVE;
+	PTB->PSOR |= 1<<ADC_RESET;
 	for(int i=0;i<1000;i++); //~170us
-	PTB->PCOR |= 1<<VDRIVE;
+	PTB->PCOR |= 1<<ADC_RESET;
 	for(int i=0;i<2000;i++); //340us
+}
+
+void SDI_config(void){ //ustawienie pinu SDI w stan niski po zakonczeniu rozmow po SPI
+	PORTA->PCR[7] = PORT_PCR_MUX(1);
+	PTA->PDDR |= 1<<7; 
+	PTA->PCOR |= 1<<7; //SET
 }
 
 void ResetDiodeON(void){
