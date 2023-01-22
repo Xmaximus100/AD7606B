@@ -2,7 +2,7 @@ from serial import Serial
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 
-ser = Serial("COM13", 115200)
+ser = Serial("COM7", 115200)
 start = False
 
 def Reset(x):
@@ -19,6 +19,7 @@ def SpeedOne(x):
 
 #tab4 = [1, 0, 1, 0, 1, 0, 1, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255]    #trial data 
 tab4 = []
+tab_assist = []
 x = [x for x in range(100)]
 y0 = [0*val for val in x]
 y1 = [0*val for val in x]
@@ -46,10 +47,10 @@ button2 = plt.axes([0.05, 0.43, 0.15, 0.15],
 button3 = plt.axes([0.05, 0.13, 0.15, 0.15],
                facecolor=axcolor)
 
-axs[0].set_ylim(ymin=0, ymax=3)
-axs[1].set_ylim(ymin=0, ymax=3)
-axs[2].set_ylim(ymin=0, ymax=3)
-axs[3].set_ylim(ymin=0, ymax=3)
+axs[0].set_ylim(ymin=-3, ymax=3)
+axs[1].set_ylim(ymin=-3, ymax=3)
+axs[2].set_ylim(ymin=-3, ymax=3)
+axs[3].set_ylim(ymin=-3, ymax=3)
 
 RESET = Button(button1, 'RESET',color="yellow")
 STOP = Button(button2, 'STOP',color="red")
@@ -67,17 +68,22 @@ print("dzialam")
 while True: 
     fig.canvas.draw()
     fig.canvas.flush_events()
-
-    x = ser.read()
-    ##print(x)
+    
+    x = ser.read(1)
+    print(x)
+    dec = int.from_bytes(x, "big",signed=True)
+    print(dec)
+    #dec = int.from_bytes(x, "big",signed=True)
+    #dec = int(x,8)
+    #print(dec)
     if(x == b'W' and not start):
         start = True
     elif(x and start):
-        print(x)
-        dec = int.from_bytes(x, "big")
-        print(dec)
-        tab4.append(dec)
-        if(len(tab4)==8):   
+        #dec = int.from_bytes(x, "big",signed=True)
+        #print(dec)
+        tab_assist.append(dec)
+        if(len(tab_assist)==8):   
+            tab4 = [x for x in tab_assist]
             for key in dout:
                 dout[key].append(0)
             for k in range(packages_amount):
@@ -99,7 +105,8 @@ while True:
                             position['D'] += 1
             for key in position:
                 position[key] = 0
-            tab4.clear()
+            tab_assist.clear()
+            print(f'TAB ASSIST: {tab_assist}\tTAB4: {tab4}')
             
             for key in dout:
                 for i in range(len(dout[key])):
@@ -117,8 +124,6 @@ while True:
             line2.set_ydata(y1)
             line3.set_ydata(y2)
             line4.set_ydata(y3)
-            fig.canvas.draw()
-            fig.canvas.flush_events()
             start = False
-            print(dout)
+            #print(dout)
             iter += 1
