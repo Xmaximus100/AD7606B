@@ -37,7 +37,7 @@ void PORTB_IRQHandler(void);
 void SPI0_IRQHandler(void);
 void UART0_IRQHandler(void);
 void TPM0_IRQHandler(void);
-void UART_Transmission(void);
+//void UART_Transmission(void);
 void AD7606_Set(uint8_t, uint8_t);
 
 char hello_word[]= "hello";
@@ -59,10 +59,8 @@ int main (void) {
 		CheckUART();
 		//if (sample_iter<samples_amount){
 			if (main_iter2>16){ //moze sie wyjebac i trzeba dac 16
-				
 				// calosc wysylania 64 bitow z baudrate 115k trwa 600us
 				Send_uart(sending_data, 1);
-				
 				main_iter=0;
 				main_iter2=0;
 				PTB->PSOR |= 1<<RANGE;
@@ -70,9 +68,9 @@ int main (void) {
 				PTB->PCOR |= 1<<RANGE;
 				unionR.word64.word1 = 0;
 				unionR.word64.word2 = 0;
-				//adc_config(0x02,0x10); // ustawienei zeby dane szly na 4 wyjscia dout
-				//adc_config(0x03,0x00); //ustawienie zakresu napiec na +/- 2.5V
-				//adc_config(0x04,0x00); //ustawienie zakresu napiec na +/- 2.5V
+				adc_config(0x02,0x10); // ustawienei zeby dane szly na 4 wyjscia dout
+				adc_config(0x03,0x02); //ustawienie zakresu napiec na +/- 2.5V
+				adc_config(0x04,0x02); //ustawienie zakresu napiec na +/- 2.5V
 				BUSY_EN();
 					//sample_iter++;
 				
@@ -102,7 +100,7 @@ void SPI_OFF()
 void delay()
 {
 	volatile int cokolwiek = 0;
-	for(int i=0;i<3000;i++)
+	for(int i=0;i<10;i++)
 	{
 		cokolwiek ++;
 	}
@@ -115,7 +113,7 @@ void adc_config(uint8_t addres, uint8_t value)
 	delay();
 	//for(int i=0;i<3000;i++); //delay
 	SPI_OFF();
-	delay();
+
 }
 
 
@@ -126,15 +124,12 @@ void CommunicationSetup(){
 	TPM0_Init();
 	TPM1_Init();
 	SPI_OFF();
-	//Reset_ADC();
-	//SPI0_Init();
-	//adc_config(0x02,0x10); // ustawienei zeby dane szly na 4 wyjscia dout
-	//adc_config(0x03,0x00); //ustawienie zakresu napiec na +/- 2.5V
-	//adc_config(0x04,0x00); //ustawienie zakresu napiec na +/- 2.5V
-	//Set_DOUT();
-
+	Reset_ADC();
+	adc_config(0x02,0x10); // ustawienei zeby dane szly na 4 wyjscia dout
+	adc_config(0x03,0x00); //ustawienie zakresu napiec na +/- 2.5V
+	adc_config(0x04,0x00); //ustawienie zakresu napiec na +/- 2.5V
 }
-
+/*
 void Reset(char value){
 	BUSY_DIS();
 	ClockOFF();
@@ -163,6 +158,7 @@ void Reset(char value){
 	BUSY_EN();
 	
 }
+*/
 
 void AD7606_Set(uint8_t address, uint8_t data){
 	SPI0_Write(address, data);
@@ -170,13 +166,13 @@ void AD7606_Set(uint8_t address, uint8_t data){
 
 void CheckUART() {
 	if(temp_uart == TOG)	{BUSY_Toggle(); ClockOFF();}
-	else if(temp_uart == RST) {BUSY_DIS(); Reset(0x22);}
-	else if(temp_uart == '1') {BUSY_DIS(); sample_iter=0; samples_amount=10; Reset(0x22);}
-	else if(temp_uart == '2') {BUSY_DIS(); sample_iter=0; samples_amount=20; Reset(0x22);}
-	else if(temp_uart == '3') {BUSY_DIS(); sample_iter=0; samples_amount=5; Reset(0x22);}
+	else if(temp_uart == RST) {BUSY_DIS();}
+	else if(temp_uart == '1') {BUSY_DIS(); sample_iter=0; samples_amount=10;}
+	else if(temp_uart == '2') {BUSY_DIS(); sample_iter=0; samples_amount=20;}
+	else if(temp_uart == '3') {BUSY_DIS(); sample_iter=0; samples_amount=5;}
 	temp_uart = 0;
 }
-
+/*
 void UART_Transmission() {
 	if(rx_FULL)		// Czy dana gotowa?
 	{
@@ -211,6 +207,7 @@ void UART_Transmission() {
 		rx_FULL=0;	// Dana skonsumowana
 	}
 }
+*/
 
 
 void UART0_IRQHandler() {

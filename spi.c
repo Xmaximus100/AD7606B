@@ -37,7 +37,7 @@ void SPI0_Init(void)
 	//SPI0->C2 = 0x10 & 0xFF; //dziala wysylanie MOSI - MODFEN(1)
 	//SPI0->C2 = 0x91 & 0xFF; //dziala SPTF
 	SPI0->C2 = 0x90 & 0xFF; //data sie zmienia, nie dziala SPTF
-	SPI0->BR = 0x16 & 0xFF;
+	SPI0->BR = 0x10 & 0xFF;
 	SPI0->M = 0xAA & 0xFF;
 	
 	//NVIC_EnableIRQ(SPI0_IRQn);
