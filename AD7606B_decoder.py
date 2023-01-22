@@ -2,7 +2,7 @@ from serial import Serial
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 
-ser = Serial("COM3", 115200)
+ser = Serial("COM13", 115200)
 start = False
 
 def Reset(x):
@@ -63,16 +63,20 @@ line4, = axs[3].plot(x, y3, 'y-')
 RESET.on_clicked(Reset)
 STOP.on_clicked(Stop)
 SPEED.on_clicked(SpeedOne)
-
+print("dzialam")
 while True: 
     fig.canvas.draw()
     fig.canvas.flush_events()
 
-    x = ser.read(1)
-    if(x == 'w'):
+    x = ser.read()
+    ##print(x)
+    if(x == b'W' and not start):
         start = True
-    if(x and start):
-        tab4.append(x)
+    elif(x and start):
+        print(x)
+        dec = int.from_bytes(x, "big")
+        print(dec)
+        tab4.append(dec)
         if(len(tab4)==8):   
             for key in dout:
                 dout[key].append(0)
@@ -80,37 +84,35 @@ while True:
                 if k<4:
                     for n in range(byte_length):
                         if n%2==0:
-                            dout['A'][iter] += ((tab4[k+packages_amount]>>(byte_length-n-1))&0x01)<<(byte_length*2-position['A']-1)
+                            dout['A'][iter] += ((tab4[k]>>(byte_length-n-1))&0x01)<<(int(byte_length*2-position['A']-1))
                             position['A'] += 1
                         else:
-                            dout['B'][iter] += ((tab4[k+packages_amount]>>(byte_length-n-1))&0x01)<<(byte_length*2-position['B']-1)
+                            dout['B'][iter] += ((tab4[k]>>(byte_length-n-1))&0x01)<<int(byte_length*2-position['B']-1)
                             position['B'] += 1
                 else:
                     for n in range(byte_length):
                         if n%2==0:
-                            print(position['C'])
-                            dout['C'][iter] += ((tab4[k+packages_amount]>>(byte_length-n-1))&0x01)<<(byte_length*2-position['C']-1)
+                            dout['C'][iter] += ((tab4[k]>>(byte_length-n-1))&0x01)<<int(byte_length*2-position['C']-1)
                             position['C'] += 1
                         else: 
-                            dout['D'][iter] += ((tab4[k+packages_amount]>>(byte_length-n-1))&0x01)<<(byte_length*2-position['D']-1)
+                            dout['D'][iter] += ((tab4[k]>>(byte_length-n-1))&0x01)<<int(byte_length*2-position['D']-1)
                             position['D'] += 1
             for key in position:
                 position[key] = 0
             tab4.clear()
-            iter += 1
+            
             for key in dout:
                 for i in range(len(dout[key])):
-                    print(i)
                     dout[key][i] = round(dout[key][i]/(2**sample_length)*voltage_coeff,3)
 
             y0 = y0[1::]
-            y0.append(dout['A'][i])
+            y0.append(dout['A'][iter])
             y1 = y1[1::]
-            y1.append(dout['B'][i])
+            y1.append(dout['B'][iter])
             y2 = y2[1::]
-            y2.append(dout['C'][i])
+            y2.append(dout['C'][iter])
             y3 = y3[1::]
-            y3.append(dout['D'][i])
+            y3.append(dout['D'][iter])
             line1.set_ydata(y0)
             line2.set_ydata(y1)
             line3.set_ydata(y2)
@@ -119,3 +121,4 @@ while True:
             fig.canvas.flush_events()
             start = False
             print(dout)
+            iter += 1

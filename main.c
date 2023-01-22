@@ -60,7 +60,7 @@ int main (void) {
 			if (main_iter2>16){ //moze sie wyjebac i trzeba dac 16
 				
 				// calosc wysylania 64 bitow z baudrate 115k trwa 600us
-				//Send_uart(sending_data, 1);
+				Send_uart(sending_data, 1);
 				
 				main_iter=0;
 				main_iter2=0;
