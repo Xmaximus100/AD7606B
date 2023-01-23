@@ -1,8 +1,9 @@
 from serial import Serial
+import struct
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 
-ser = Serial("COM7", 115200)
+ser = Serial("COM3", 115200)
 start = False
 
 def Reset(x):
@@ -26,15 +27,16 @@ y1 = [0*val for val in x]
 y2 = [0*val for val in x]
 y3 = [0*val for val in x]
 position = {'A':0, 'B':0, 'C':0, 'D':0}
-dout = {'A':[],'B':[],'C':[],'D':[]}
+dout = {'A':0,'B':0,'C':0,'D':0}
 iter = 0
+dec : int
 
 msb_pos = 15
 words_amount = 3
 packages_amount = 8
 byte_length = 8
 sample_length = 16
-voltage_coeff = 2.5
+voltage_coeff = 10
 
 plt.ion()
 fig, axs = plt.subplots(4)
@@ -47,10 +49,10 @@ button2 = plt.axes([0.05, 0.43, 0.15, 0.15],
 button3 = plt.axes([0.05, 0.13, 0.15, 0.15],
                facecolor=axcolor)
 
-axs[0].set_ylim(ymin=-3, ymax=3)
-axs[1].set_ylim(ymin=-3, ymax=3)
-axs[2].set_ylim(ymin=-3, ymax=3)
-axs[3].set_ylim(ymin=-3, ymax=3)
+axs[0].set_ylim(ymin=int(-voltage_coeff*1.2), ymax=int(voltage_coeff*1.2))
+axs[1].set_ylim(ymin=int(-voltage_coeff*1.2), ymax=int(voltage_coeff*1.2))
+axs[2].set_ylim(ymin=int(-voltage_coeff*1.2), ymax=int(voltage_coeff*1.2))
+axs[3].set_ylim(ymin=int(-voltage_coeff*1.2), ymax=int(voltage_coeff*1.2))
 
 RESET = Button(button1, 'RESET',color="yellow")
 STOP = Button(button2, 'STOP',color="red")
@@ -69,39 +71,51 @@ while True:
     fig.canvas.draw()
     fig.canvas.flush_events()
     
-    x = ser.read(1)
-    print(x)
-    dec = int.from_bytes(x, "big",signed=True)
-    print(dec)
+    if ser.in_waiting and not start:
+        x = ser.read(1)
+        print(f'oppening data {x}')
+    #print("DANA")
+        dec = int.from_bytes(x, "big",signed=False)
+        print(dec)
+        ser.reset_input_buffer()
+        ser.reset_output_buffer()
     #dec = int.from_bytes(x, "big",signed=True)
     #dec = int(x,8)
     #print(dec)
     if(x == b'W' and not start):
         start = True
-    elif(x and start):
+    elif(start):
+        x = bytearray(ser.read(8))
+        print(x)
+        print("DANA")
+        dec = int.from_bytes(x, "big",signed=False)
+        print(dec)
+        ser.reset_input_buffer()
+        ser.reset_output_buffer()
+    if(x and start):
         #dec = int.from_bytes(x, "big",signed=True)
         #print(dec)
         tab_assist.append(dec)
         if(len(tab_assist)==8):   
             tab4 = [x for x in tab_assist]
             for key in dout:
-                dout[key].append(0)
+                dout[key] = 0
             for k in range(packages_amount):
                 if k<4:
                     for n in range(byte_length):
                         if n%2==0:
-                            dout['A'][iter] += ((tab4[k]>>(byte_length-n-1))&0x01)<<(int(byte_length*2-position['A']-1))
+                            dout['A'] += ((tab4[k]>>(byte_length-n-1))&0x01)<<(int(byte_length*2-position['A']-1))
                             position['A'] += 1
                         else:
-                            dout['B'][iter] += ((tab4[k]>>(byte_length-n-1))&0x01)<<int(byte_length*2-position['B']-1)
+                            dout['B'] += ((tab4[k]>>(byte_length-n-1))&0x01)<<int(byte_length*2-position['B']-1)
                             position['B'] += 1
                 else:
                     for n in range(byte_length):
                         if n%2==0:
-                            dout['C'][iter] += ((tab4[k]>>(byte_length-n-1))&0x01)<<int(byte_length*2-position['C']-1)
+                            dout['C'] += ((tab4[k]>>(byte_length-n-1))&0x01)<<int(byte_length*2-position['C']-1)
                             position['C'] += 1
                         else: 
-                            dout['D'][iter] += ((tab4[k]>>(byte_length-n-1))&0x01)<<int(byte_length*2-position['D']-1)
+                            dout['D'] += ((tab4[k]>>(byte_length-n-1))&0x01)<<int(byte_length*2-position['D']-1)
                             position['D'] += 1
             for key in position:
                 position[key] = 0
@@ -109,21 +123,25 @@ while True:
             print(f'TAB ASSIST: {tab_assist}\tTAB4: {tab4}')
             
             for key in dout:
-                for i in range(len(dout[key])):
-                    dout[key][i] = round(dout[key][i]/(2**sample_length)*voltage_coeff,3)
+                print(f'before unpack:{dout[key]}')
+                dout[key] = struct.unpack('h', struct.pack('H',int(dout[key])))[0]
+                print(dout[key])
+                dout[key] = round(dout[key]/(2**(sample_length))*voltage_coeff,6)
 
             y0 = y0[1::]
-            y0.append(dout['A'][iter])
+            y0.append(dout['A'])
             y1 = y1[1::]
-            y1.append(dout['B'][iter])
+            y1.append(dout['B'])
             y2 = y2[1::]
-            y2.append(dout['C'][iter])
+            y2.append(dout['C'])
             y3 = y3[1::]
-            y3.append(dout['D'][iter])
+            y3.append(dout['D'])
             line1.set_ydata(y0)
             line2.set_ydata(y1)
             line3.set_ydata(y2)
             line4.set_ydata(y3)
+            print(y0,y1,y2,y3)
+            del(dec)
             start = False
             #print(dout)
             iter += 1
