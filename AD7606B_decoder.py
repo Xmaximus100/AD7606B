@@ -71,30 +71,22 @@ while True:
     fig.canvas.draw()
     fig.canvas.flush_events()
     
-    if ser.in_waiting and not start:
-        x = ser.read(1)
-        print(f'oppening data {x}')
-    #print("DANA")
-        dec = int.from_bytes(x, "big",signed=False)
-        print(dec)
-        ser.reset_input_buffer()
-        ser.reset_output_buffer()
-    #dec = int.from_bytes(x, "big",signed=True)
-    #dec = int(x,8)
-    #print(dec)
+    #if ser.in_waiting:
+    x = ser.read(1)
+    print(f'oppening data {x}')
     if(x == b'W' and not start):
         start = True
-    elif(start):
-        x = bytearray(ser.read(8))
-        print(x)
+    # elif(start):
+    #     x = bytearray(ser.read(8))
+    #     print(x)
+    #     print("DANA")
+
+    #     ser.reset_input_buffer()
+    #     ser.reset_output_buffer()
+    elif(x and start):
         print("DANA")
         dec = int.from_bytes(x, "big",signed=False)
         print(dec)
-        ser.reset_input_buffer()
-        ser.reset_output_buffer()
-    if(x and start):
-        #dec = int.from_bytes(x, "big",signed=True)
-        #print(dec)
         tab_assist.append(dec)
         if(len(tab_assist)==8):   
             tab4 = [x for x in tab_assist]
@@ -141,7 +133,8 @@ while True:
             line3.set_ydata(y2)
             line4.set_ydata(y3)
             print(y0,y1,y2,y3)
-            del(dec)
             start = False
-            #print(dout)
             iter += 1
+            #ser.flush()
+            ser.reset_input_buffer()
+            ser.reset_output_buffer()
