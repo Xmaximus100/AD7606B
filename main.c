@@ -51,7 +51,7 @@ void Send_uart(char data[], uint32_t size)
 		UART0->D = data[i];
 		}	
 }
-
+uint32_t test = 0;
 int main (void) { 
 	CommunicationSetup();
 	Send_uart(hello_word, 5);
@@ -73,7 +73,11 @@ int main (void) {
 				adc_config(0x04,0x02); //ustawienie zakresu napiec na +/- 2.5V
 				BUSY_EN();
 					//sample_iter++;
-				
+				test++;
+				if(test > 10000)
+					{
+						TPM1_Init(500);
+					}
 				}
 		//}
 		}
@@ -122,14 +126,12 @@ void CommunicationSetup(){
 	AD7606B_Init();
 	UART0_Init();
 	TPM0_Init();
-	TPM1_Init();
+	TPM1_Init(800);
 	SPI_OFF();
 	Reset_ADC();
 	adc_config(0x02,0x10); // ustawienei zeby dane szly na 4 wyjscia dout
 	adc_config(0x03,0x00); //ustawienie zakresu napiec na +/- 2.5V
-	adc_config(0x04,0x00); //ustawienie zakresu napiec na +/- 2.5V
-	delay();
-	//TPM1_freq(100);
+	adc_config(0x04,0x00); //ustawienie zakresu napiec na +/- 2.5V	
 }
 /*
 void Reset(char value){
