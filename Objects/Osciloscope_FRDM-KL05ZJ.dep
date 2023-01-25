@@ -1,6 +1,6 @@
 Dependencies for Project 'Osciloscope', Target 'FRDM-KL05ZJ': (DO NOT MODIFY !)
 CompilerVersion: 5060960::V5.06 update 7 (build 960)::.\ARMCC
-F (.\main.c)(0x63D15CB5)(--c99 -c --cpu Cortex-M0+ -D__EVAL -g -O0 --apcs=interwork --split_sections-I.\RTE\_FRDM-KL05ZJ-IC:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include-D__UVISION_VERSION="532" -D_RTE_ -DMKL05Z32xxx4 -D_RTE_-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (.\main.c)(0x63D17D34)(--c99 -c --cpu Cortex-M0+ -D__EVAL -g -O0 --apcs=interwork --split_sections-I.\RTE\_FRDM-KL05ZJ-IC:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include-D__UVISION_VERSION="532" -D_RTE_ -DMKL05Z32xxx4 -D_RTE_-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (defines.h)(0x63CBF331)
 I (spi.h)(0x63C8058B)
 I (C:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include\MKL05Z4.h)(0x585BD06A)
@@ -16,7 +16,7 @@ I (AD7606B.h)(0x63CC993A)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5F63DBDC)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5F63DBEA)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5F63DBDC)
-F (.\spi.c)(0x63CC9A6E)(--c99 -c --cpu Cortex-M0+ -D__EVAL -g -O0 --apcs=interwork --split_sections-I.\RTE\_FRDM-KL05ZJ-IC:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include-D__UVISION_VERSION="532" -D_RTE_ -DMKL05Z32xxx4 -D_RTE_-o .\objects\spi.o --omf_browse .\objects\spi.crf --depend .\objects\spi.d)
+F (.\spi.c)(0x63D15F89)(--c99 -c --cpu Cortex-M0+ -D__EVAL -g -O0 --apcs=interwork --split_sections-I.\RTE\_FRDM-KL05ZJ-IC:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include-D__UVISION_VERSION="532" -D_RTE_ -DMKL05Z32xxx4 -D_RTE_-o .\objects\spi.o --omf_browse .\objects\spi.crf --depend .\objects\spi.d)
 I (spi.h)(0x63C8058B)
 I (C:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include\MKL05Z4.h)(0x585BD06A)
 I (C:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include\core_cm0plus.h)(0x626F9F3E)
@@ -27,7 +27,7 @@ I (C:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include\cms
 I (C:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include\system_MKL05Z4.h)(0x55FBBCD8)
 I (defines.h)(0x63CBF331)
 F (.\spi.h)(0x63C8058B)()
-F (.\AD7606B.c)(0x63CC993A)(--c99 -c --cpu Cortex-M0+ -D__EVAL -g -O0 --apcs=interwork --split_sections-I.\RTE\_FRDM-KL05ZJ-IC:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include-D__UVISION_VERSION="532" -D_RTE_ -DMKL05Z32xxx4 -D_RTE_-o .\objects\ad7606b.o --omf_browse .\objects\ad7606b.crf --depend .\objects\ad7606b.d)
+F (.\AD7606B.c)(0x63D17C32)(--c99 -c --cpu Cortex-M0+ -D__EVAL -g -O0 --apcs=interwork --split_sections-I.\RTE\_FRDM-KL05ZJ-IC:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include-D__UVISION_VERSION="532" -D_RTE_ -DMKL05Z32xxx4 -D_RTE_-o .\objects\ad7606b.o --omf_browse .\objects\ad7606b.crf --depend .\objects\ad7606b.d)
 I (AD7606B.h)(0x63CC993A)
 I (C:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include\MKL05Z4.h)(0x585BD06A)
 I (C:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include\core_cm0plus.h)(0x626F9F3E)
@@ -47,7 +47,7 @@ I (C:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include\cms
 I (C:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include\cmsis_armcc.h)(0x626F9F3E)
 I (C:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include\system_MKL05Z4.h)(0x55FBBCD8)
 F (.\DMA.h)(0x63CBF333)()
-F (.\tpm.c)(0x63D010B9)(--c99 -c --cpu Cortex-M0+ -D__EVAL -g -O0 --apcs=interwork --split_sections-I.\RTE\_FRDM-KL05ZJ-IC:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include-D__UVISION_VERSION="532" -D_RTE_ -DMKL05Z32xxx4 -D_RTE_-o .\objects\tpm.o --omf_browse .\objects\tpm.crf --depend .\objects\tpm.d)
+F (.\tpm.c)(0x63D17E00)(--c99 -c --cpu Cortex-M0+ -D__EVAL -g -O0 --apcs=interwork --split_sections-I.\RTE\_FRDM-KL05ZJ-IC:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include-D__UVISION_VERSION="532" -D_RTE_ -DMKL05Z32xxx4 -D_RTE_-o .\objects\tpm.o --omf_browse .\objects\tpm.crf --depend .\objects\tpm.d)
 I (tpm.h)(0x63D0102F)
 I (C:\Users\admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.15.0\Device\Include\MKL05Z4.h)(0x585BD06A)
 I (C:\Users\admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include\core_cm0plus.h)(0x626F9F3E)

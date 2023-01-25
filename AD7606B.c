@@ -5,7 +5,7 @@ char load_enable = 1;
 uint8_t block_iter[] = {0,0,0,0};
 uint32_t temp_ch[8];
 registers reg;
-
+/*
 void SetAddress(void){
 	reg.channel[0].address = 0x03;
 	reg.channel[1].address = 0x03;
@@ -26,7 +26,7 @@ void SetAddress(void){
 	reg.config.address = 0x02;
 	reg.config.data = 0x10; 
 }
-
+*/
 
 //Wlaczenie/wylaczenie przerwania od pinu busy - to jest potrzebne bo na pin convst idzie sygnal cyklicznie co jakis czas
 void BUSY_Toggle(void)
@@ -46,7 +46,7 @@ void BUSY_DIS(void)
 
 
 void AD7606B_Init(void){	
-	SetAddress();
+	//SetAddress();
 	SIM->SCGC5 |= (SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK); 
 	PORTB->PCR[REFSEL] = PORT_PCR_MUX(1);		
 	PORTB->PCR[ADC_RESET] = PORT_PCR_MUX(1);	
@@ -82,6 +82,13 @@ void AD7606B_Init(void){
 	NVIC_EnableIRQ(PORTB_IRQn);							/* Enable NVIC interrupts source for PORTC_B module */
 	
 	NVIC_SetPriority (PORTB_IRQn, 1);
+	/*
+	PORTA->PCR[12] = PORT_PCR_MUX(1); //stan wysoki na pinie conv
+	PTA->PDDR |= 1<<12; 
+	PTA->PSOR |= 1<<12; //SET
+	*/
+	
+	
 }
 
 void Set_DOUT(void){
@@ -99,14 +106,12 @@ void Set_DOUT(void){
 	PTA->PDDR |= 1<<SS;
 }
 
-
-
-
 uint16_t SetRegister(uint8_t address, uint8_t data){	
 	return ((address&0x3F)<<8) + (data&0xFF); 
 }	
 
 //error: busy - opadajace, a pojawiaja sie dane
+
 void Reset_ADC(void){
 	PTB->PSOR |= 1<<ADC_RESET;
 	for(int i=0;i<1000;i++); //~170us

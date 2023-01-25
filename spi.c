@@ -1,10 +1,8 @@
 #include "spi.h"
 #include "defines.h"
-
-
-uint8_t temp_data = 0;
-uint8_t iter = 0;
-char mosi;
+//uint8_t temp_data = 0;
+//uint8_t iter = 0;
+//char mosi;
 
 void SPI0_Init(void)
 {
@@ -51,7 +49,7 @@ void CS_On(void){
 void CS_Off(void){
 	PTA->PSOR |= 1<<SS;
 }
-
+/*
 void LoadBufferSPI(uint16_t temp){
 	temp_data = temp;
 	iter = 0;
@@ -70,22 +68,17 @@ void SPI_Write_MSB(void){
 	else PTB->PCOR |= 1<<MOSI;
 	iter++;
 }
+*/
 
 void SPI0_Write(uint8_t data1, uint8_t data2)
 {
-	//SPI0->C1 |= SPI_C1_SPIE_MASK;
-	//do{ //odkomentowac z oscyloskopem //fig_1 enable for 24bit
-	
 	while((SPI0->S & SPI_S_SPTEF_MASK) != SPI_S_SPTEF_MASK){}
 	SPI0->D = data1;											//mozemy utworzyc max 24-bitowa ramke
 	while(!SPI0->S>>SPI_S_SPRF_SHIFT){} //kazde nadanie danych musi zostac potwierdzone przez odczytanie SPI0->S
 	SPI0->D = data2;			//po odczycie mozemy dokleic jeszcze jedna ramke 
-	//while(!SPI0->S>>SPI_S_SPRF_SHIFT){}	//-->
-	//SPI0->D = 0xAA;											//this way we can add up to 24bit of data to spi shifter
-	//}while((SPI0->S & SPI_S_SPTEF_MASK) != SPI_S_SPTEF_MASK); //enable for 24bit
-	//while(!SPI0->S>>SPI_S_SPRF_SHIFT){}	//enable for 24bit
 }
 
+/*
 uint8_t SPI0_Read(void)
 {
 	uint8_t data;
@@ -98,5 +91,5 @@ uint8_t SPI0_Read(void)
 	}while((SPI0->S & SPI_S_SPTEF_MASK) != SPI_S_SPTEF_MASK);		
 	return data;
 }
-
+*/
 
