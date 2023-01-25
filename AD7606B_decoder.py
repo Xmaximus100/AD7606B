@@ -7,8 +7,10 @@ from numpy import linspace
 
 class OsciloscopeInterface:
     def __init__(self):
-        self.ser = Serial("COM13", 115200)
+        self.ser = Serial("COM7", 115200)
         self.start = False
+        self.begin = False
+        self.read = 0
         self.tab4 = []
         self.tab_assist = []
         self.position = {'A':0, 'B':0, 'C':0, 'D':0}
@@ -16,12 +18,13 @@ class OsciloscopeInterface:
         self.time_on_div = 5
         self.voltage_coeff = 2.5
         self.range = 0
-        self.x = linspace(0, self.time_on_div*5, 100)
+        self.x = linspace(0, self.time_on_div*25, 100)
         self.y0 = [0*val for val in self.x]
         self.y1 = [0*val for val in self.x]
         self.y2 = [0*val for val in self.x]
         self.y3 = [0*val for val in self.x]
         self.dec : int
+        
 
         self.live = True
         plt.ion()
@@ -44,9 +47,6 @@ class OsciloscopeInterface:
         self.SetLimitsY()
         self.Plot()
 
-        self.fig.canvas.draw()
-        self.fig.canvas.flush_events()
-
         self.START = Button(self.button1, 'START',color="yellow")
         self.TIME = Slider(self.slider1, 'STOP',2, 10, valinit=10,valstep=1,color="red")
         self.RANGE = RadioButtons(self.radiobutton1,labels=["RANGE 2.5V","RANGE 5V", "RANGE 10V"])
@@ -54,11 +54,15 @@ class OsciloscopeInterface:
         self.START.on_clicked(self.Start)
         self.TIME.on_changed(self.TimeOnDiv)
         self.RANGE.on_clicked(self.RangeSet)
+    
+    def ReadUART(self):
+        self.read = self.ser.read(1)
 
     def Start(self,x):
-        #self.ser.write(b'X')
-        #self.ser.write(self.range)
-        #self.ser.write(self.time_on_div)
+        self.ser.write(b'X')
+        self.ser.write(self.range)
+        self.ser.write(self.time_on_div)
+        self.begin = True
         print("START")
 
     def TimeOnDiv(self,val):
@@ -84,7 +88,6 @@ class OsciloscopeInterface:
             self.range = 3
             self.voltage_coeff = 10
             self.SetLimitsY()
-        #self.ser.write('1')
 
     def SetGrid(self):
         for i in self.axs:
@@ -117,6 +120,8 @@ class OsciloscopeInterface:
     sample_length = 16
 
 AD7606B = OsciloscopeInterface()
+
+#ser = Serial("COM7", 115200)
 print("dzialam")
 
 while True: 
@@ -124,11 +129,17 @@ while True:
         AD7606B.fig.canvas.draw()
     AD7606B.fig.canvas.flush_events()
     #x = 0
-    #if ser.in_waiting:
-    x = AD7606B.ser.read(1)
-    #print(f'oppening data {x}')
-    if(x == b'W' and not start):
-        start = True
+    #if AD7606B.ser.in_waiting:
+    #x = ser.read(1)
+    # if begin:
+    #     AD7606B.ser.write(b'1')
+    #     begin = 0
+    if AD7606B.begin:
+        AD7606B.ReadUART()
+
+    print(f'oppening data {AD7606B.read}')
+    if(AD7606B.read == b'W' and not AD7606B.start):
+        AD7606B.start = True
     # elif(start):
     #     x = bytearray(ser.read(8))
     #     print(x)
@@ -136,9 +147,9 @@ while True:
 
     #     ser.reset_input_buffer()
     #     ser.reset_output_buffer()
-    elif(x and start):
+    elif(AD7606B.read and AD7606B.start):
         print("DANA")
-        dec = int.from_bytes(x, "big",signed=False)
+        dec = int.from_bytes(AD7606B.read, "big",signed=False)
         print(dec)
         AD7606B.tab_assist.append(dec)
         if(len(AD7606B.tab_assist)==8):   

@@ -29,11 +29,12 @@ void SetAddress(void){
 */
 
 //Wlaczenie/wylaczenie przerwania od pinu busy - to jest potrzebne bo na pin convst idzie sygnal cyklicznie co jakis czas
+/*
 void BUSY_Toggle(void)
 {
 	PORTB->PCR[BUSY] ^= PORT_PCR_IRQC(0xA);
 }
-
+*/
 void BUSY_EN(void)
 {
 	PORTB->PCR[BUSY] |= PORT_PCR_IRQC(0xA);
@@ -46,7 +47,6 @@ void BUSY_DIS(void)
 
 
 void AD7606B_Init(void){	
-	//SetAddress();
 	SIM->SCGC5 |= (SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK); 
 	PORTB->PCR[REFSEL] = PORT_PCR_MUX(1);		
 	PORTB->PCR[ADC_RESET] = PORT_PCR_MUX(1);	
@@ -54,25 +54,17 @@ void AD7606B_Init(void){
 	PORTB->PCR[_PAR_SER] = PORT_PCR_MUX(1);
 	PORTB->PCR[RANGE] = PORT_PCR_MUX(1);
 	PORTB->PCR[CONTROL_DIODE] = PORT_PCR_MUX(1); //ustawienie tej diody rowniez anuluje przerwanie 
-//	| PORT_PCR_PE_MASK);
 	PORTB->PCR[BUSY] |=  PORT_PCR_PE_MASK |		
 											 PORT_PCR_PS_MASK;
-	
-	//PORTA->PCR[FIRSTDATA] = PORT_PCR_MUX(1);
-	
 	PORTB->PCR[BUSY] |= 	PORT_PCR_IRQC(0xA);
-	//
 
-	//
 	PTB->PDDR |= 1<<RANGE; //ustawianie B7 jako RANGE, wywala przerwania na zegarze
 	PTB->PDDR |= 1<<REFSEL;
 	PTB->PDDR |= 1<<_PAR_SER;
 	FPTB->PDDR |= 1<<CONTROL_DIODE;
 	PTB->PDDR |= 1<<ADC_RESET;
-	//PTB->PDDR |= ~(1<<_PAR_SER); //is input when reset
 	PTB->PDDR &= ~(1<<BUSY); //is input when reset
 	
-	//PTB->PSOR |= 1<<RANGE;
 	FPTB->PSOR |= 1<<CONTROL_DIODE;
 	PTB->PSOR |= 1<<REFSEL;	
 	PTB->PSOR |= 1<<_PAR_SER;
@@ -82,13 +74,7 @@ void AD7606B_Init(void){
 	NVIC_EnableIRQ(PORTB_IRQn);							/* Enable NVIC interrupts source for PORTC_B module */
 	
 	NVIC_SetPriority (PORTB_IRQn, 1);
-	/*
-	PORTA->PCR[12] = PORT_PCR_MUX(1); //stan wysoki na pinie conv
-	PTA->PDDR |= 1<<12; 
-	PTA->PSOR |= 1<<12; //SET
-	*/
-	
-	
+
 }
 
 void Set_DOUT(void){
@@ -105,11 +91,11 @@ void Set_DOUT(void){
 	
 	PTA->PDDR |= 1<<SS;
 }
-
+/*
 uint16_t SetRegister(uint8_t address, uint8_t data){	
 	return ((address&0x3F)<<8) + (data&0xFF); 
 }	
-
+*/
 //error: busy - opadajace, a pojawiaja sie dane
 
 void Reset_ADC(void){
@@ -124,7 +110,7 @@ void SDI_config(void){ //ustawienie pinu SDI w stan niski po zakonczeniu rozmow 
 	PTA->PDDR |= 1<<7; 
 	PTA->PCOR |= 1<<7; //SET
 }
-
+/*
 void ResetDiodeON(void){
 	FPTB->PCOR |= 1<<CONTROL_DIODE;
 }
@@ -132,5 +118,6 @@ void ResetDiodeON(void){
 void ResetDiodeOFF(void){
 	FPTB->PSOR |= 1<<CONTROL_DIODE;
 }
+*/
 
 

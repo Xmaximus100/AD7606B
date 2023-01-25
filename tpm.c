@@ -98,12 +98,13 @@ void ClockOFF(void){ //wyzwolic przy odczytaniu pelnego bufora 32bity
 }
 
 void CONVST_OFF(void){
-	TPM1->SC &=  ~TPM_SC_CMOD(0x01);
-	TPM1->CNT = 0x00;
-	//Ustawienie pinu CONV na stan wysoki zeby w trakcie wylaczenia pin nie wisial w powietrzu bo wtedy sie randomowo wykonuja pomiary
 	PORTA->PCR[12] = PORT_PCR_MUX(1);
 	PTA->PDDR |= 1<<12; 
 	PTA->PSOR |= 1<<12; //SET
+	TPM1->SC &=  ~TPM_SC_CMOD(0x01);
+	TPM1->CNT = 0x00;
+	//Ustawienie pinu CONV na stan wysoki zeby w trakcie wylaczenia pin nie wisial w powietrzu bo wtedy sie randomowo wykonuja pomiary
+
 	
 }
 /*

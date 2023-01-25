@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\Osciloscope.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\Osciloscope.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Wed Jan 25 20:10:52 2023
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Wed Jan 25 20:24:39 2023
 <BR><P>
 <H3>Maximum Stack Usage =         48 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -403,7 +403,9 @@ Global Symbols
 <P><STRONG><a name="[8e]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, indicate_semi.o(.text), UNUSED)
 
 <P><STRONG><a name="[52]"></a>BUSY_DIS</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, ad7606b.o(i.BUSY_DIS))
-<BR><BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_ON
+<BR><BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[1c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TPM0_IRQHandler
+<LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_ON
 <LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORTB_IRQHandler
 </UL>
 
@@ -412,7 +414,7 @@ Global Symbols
 <LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_OFF
 </UL>
 
-<P><STRONG><a name="[60]"></a>CONVST_OFF</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, tpm.o(i.CONVST_OFF))
+<P><STRONG><a name="[60]"></a>CONVST_OFF</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, tpm.o(i.CONVST_OFF))
 <BR><BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
@@ -530,11 +532,12 @@ Global Symbols
 <P><STRONG><a name="[2b]"></a>SystemInit</STRONG> (Thumb, 78 bytes, Stack size 0 bytes, system_mkl05z4.o(i.SystemInit))
 <BR>[Address Reference Count : 1]<UL><LI> startup_mkl05z4.o(.text)
 </UL>
-<P><STRONG><a name="[1c]"></a>TPM0_IRQHandler</STRONG> (Thumb, 138 bytes, Stack size 8 bytes, main.o(i.TPM0_IRQHandler))
+<P><STRONG><a name="[1c]"></a>TPM0_IRQHandler</STRONG> (Thumb, 142 bytes, Stack size 8 bytes, main.o(i.TPM0_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = TPM0_IRQHandler
 </UL>
 <BR>[Calls]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ClockOFF
 <LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CS_Off
+<LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUSY_DIS
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_mkl05z4.o(RESET)
 </UL>
@@ -591,11 +594,12 @@ Global Symbols
 <LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
 </UL>
 
-<P><STRONG><a name="[3a]"></a>main</STRONG> (Thumb, 136 bytes, Stack size 0 bytes, main.o(i.main))
+<P><STRONG><a name="[3a]"></a>main</STRONG> (Thumb, 140 bytes, Stack size 0 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = main &rArr; CheckUART &rArr; range_confg_ALL &rArr; adc_config &rArr; delay
 </UL>
 <BR>[Calls]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CONVST_OFF
 <LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUSY_EN
+<LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUSY_DIS
 <LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Send_uart
 <LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommunicationSetup
