@@ -7,7 +7,7 @@ from numpy import linspace
 
 class OsciloscopeInterface:
     def __init__(self):
-        self.ser = Serial("COM7", 115200)
+        self.ser = Serial("COM13", 115200)
         self.start = False
         self.begin = False
         self.read = 0
@@ -184,22 +184,21 @@ while True:
                 print(AD7606B.dout[key])
                 AD7606B.dout[key] = round(AD7606B.dout[key]/(2**(AD7606B.sample_length))*AD7606B.voltage_coeff,6)
 
-            y0 = y0[1::]
-            y0.append(AD7606B.dout['A'])
-            y1 = y1[1::]
-            y1.append(AD7606B.dout['B'])
-            y2 = y2[1::]
-            y2.append(AD7606B.dout['C'])
-            y3 = y3[1::]
-            y3.append(AD7606B.dout['D'])
+            AD7606B.y0 = AD7606B.y0[1::]
+            AD7606B.y0.append(AD7606B.dout['A'])
+            AD7606B.y1 = AD7606B.y1[1::]
+            AD7606B.y1.append(AD7606B.dout['B'])
+            AD7606B.y2 = AD7606B.y2[1::]
+            AD7606B.y2.append(AD7606B.dout['C'])
+            AD7606B.y3 = AD7606B.y3[1::]
+            AD7606B.y3.append(AD7606B.dout['D'])
             if AD7606B.live:
-                AD7606B.line1.set_ydata(y0)
-                AD7606B.line2.set_ydata(y1)
-                AD7606B.line3.set_ydata(y2)
-                AD7606B.line4.set_ydata(y3)
-            print(y0,y1,y2,y3)
+                AD7606B.line1.set_ydata(AD7606B.y0)
+                AD7606B.line2.set_ydata(AD7606B.y1)
+                AD7606B.line3.set_ydata(AD7606B.y2)
+                AD7606B.line4.set_ydata(AD7606B.y3)
+            print(AD7606B.y0,AD7606B.y1,AD7606B.y2,AD7606B.y3)
             start = False
-            iter += 1
             #ser.flush()
             AD7606B.ser.reset_input_buffer()
             AD7606B.ser.reset_output_buffer()

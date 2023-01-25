@@ -14,7 +14,7 @@
 #define RANGE_5V 0x1
 #define RANGE_10V 0x2
 
-uint32_t samples_amount = 10;
+uint32_t samples_amount = 100;
 uint32_t sample_iter = 0;
 char temp_uart;
 uint16_t main_iter = 0;
@@ -149,7 +149,7 @@ void CommunicationSetup(){
 	delay();
 	UART0_Init();
 	TPM0_Init();
-	TPM1_Init(200); // INICJALIZUJEMY NA 200HZ
+	TPM1_Init(10); // INICJALIZUJEMY NA 200HZ
 	SPI_OFF();
 	Reset_ADC();
 	adc_config(0x02,0x10); // ustawienei zeby dane szly na 4 wyjscia dout
