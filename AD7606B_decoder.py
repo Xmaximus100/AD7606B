@@ -29,6 +29,8 @@ class OsciloscopeInterface:
         for i in self.axs:
             i.set_xlabel("t[ms]")
             i.set_ylabel("U[V]")
+            i.grid(which="both")
+            i.grid(which="major",alpha=self.time_on_div/10)
         self.fig.set_size_inches(10,7)
         plt.subplots_adjust(left=0.3)
         axcolor = 'lightgoldenrodyellow'
@@ -62,6 +64,7 @@ class OsciloscopeInterface:
     def TimeOnDiv(self,val):
         self.time_on_div = val
         self.x = linspace(0, self.time_on_div*5, 100)
+        self.SetGrid()
         self.SetXData()
         self.SetLimitsX()
         print(val)
@@ -70,30 +73,30 @@ class OsciloscopeInterface:
     def RangeSet(self,label):
         print(label)
         if label=="RANGE 2.5V":
-            self.range = 0
+            self.range = 1
             self.voltage_coeff = 2.5
             self.SetLimitsY()
         elif label=="RANGE 5V":
-            self.range = 1
+            self.range = 2
             self.voltage_coeff = 5
             self.SetLimitsY()
         else:
-            self.range = 2
+            self.range = 3
             self.voltage_coeff = 10
             self.SetLimitsY()
         #self.ser.write('1')
 
+    def SetGrid(self):
+        for i in self.axs:
+            i.grid(which="major",alpha=self.time_on_div/10)
+
     def SetLimitsY(self):
-        self.axs[0].set_ylim(ymin=-self.voltage_coeff*1.2, ymax=self.voltage_coeff*1.2)
-        self.axs[1].set_ylim(ymin=-self.voltage_coeff*1.2, ymax=self.voltage_coeff*1.2)
-        self.axs[2].set_ylim(ymin=-self.voltage_coeff*1.2, ymax=self.voltage_coeff*1.2)
-        self.axs[3].set_ylim(ymin=-self.voltage_coeff*1.2, ymax=self.voltage_coeff*1.2)
+        for i in self.axs:
+            i.set_ylim(ymin=-self.voltage_coeff*1.2, ymax=self.voltage_coeff*1.2)
 
     def SetLimitsX(self):
-        self.axs[0].set_xlim(xmin=-0.2*self.time_on_div, xmax=self.time_on_div*5.2)
-        self.axs[1].set_xlim(xmin=-0.2*self.time_on_div, xmax=self.time_on_div*5.2)
-        self.axs[2].set_xlim(xmin=-0.2*self.time_on_div, xmax=self.time_on_div*5.2)
-        self.axs[3].set_xlim(xmin=-0.2*self.time_on_div, xmax=self.time_on_div*5.2)
+        for i in self.axs:
+            i.set_xlim(xmin=-0.2*self.time_on_div, xmax=self.time_on_div*5.2)
 
     def SetXData(self):
         self.line1.set_xdata(self.x)
