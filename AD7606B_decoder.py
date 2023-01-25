@@ -7,7 +7,7 @@ from numpy import linspace
 
 class OsciloscopeInterface:
     def __init__(self):
-        #self.ser = Serial("COM3", 115200)
+        self.ser = Serial("COM13", 115200)
         self.start = False
         self.tab4 = []
         self.tab_assist = []
@@ -23,7 +23,7 @@ class OsciloscopeInterface:
         self.y3 = [0*val for val in self.x]
         self.dec : int
 
-        self.live = False
+        self.live = True
         plt.ion()
         self.fig, self.axs = plt.subplots(4)
         for i in self.axs:
@@ -123,9 +123,9 @@ while True:
     if AD7606B.live:
         AD7606B.fig.canvas.draw()
     AD7606B.fig.canvas.flush_events()
-    x = 0
+    #x = 0
     #if ser.in_waiting:
-    #x = ser.read(1)
+    x = AD7606B.ser.read(1)
     #print(f'oppening data {x}')
     if(x == b'W' and not start):
         start = True
