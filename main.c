@@ -149,7 +149,7 @@ void CommunicationSetup(){
 	delay();
 	UART0_Init();
 	TPM0_Init();
-	TPM1_Init(10); // INICJALIZUJEMY NA 200HZ
+	TPM1_Init(100); // INICJALIZUJEMY NA 200HZ
 	SPI_OFF();
 	Reset_ADC();
 	adc_config(0x02,0x10); // ustawienei zeby dane szly na 4 wyjscia dout
@@ -167,8 +167,8 @@ void CheckUART() {
 		uart_iter++;
 		if(uart_iter == 3)
 		{
-			uart_data[0] = uart_data[0] -48; //DO TESTOW JAK WYSYLAM ASCI
-			uart_data[1] = uart_data[1] -48;
+			//uart_data[0] = uart_data[0]; //DO TESTOW JAK WYSYLAM ASCI
+			//uart_data[1] = uart_data[1];
 			//adc_config(uart_data[0],uart_data[1]);
 			TPM1_Init((1000/uart_data[1]));
 			range_confg_ALL((uart_data[0]-0x1));
