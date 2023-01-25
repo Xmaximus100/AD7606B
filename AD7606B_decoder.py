@@ -5,10 +5,22 @@ from matplotlib.widgets import Button, Slider, RadioButtons
 from enum import Enum
 from numpy import linspace
 
+class UART:
+    def __init__(self):
+        self.ser = Serial("COM7", 115200)
+        self.read = 0
+
+    def ReadUART(self):
+        self.read = self.ser.read(1)
+
+    def WriteUART(self, x):
+        self.ser.write(x)
+
 class OsciloscopeInterface:
     def __init__(self):
-        #self.ser = Serial("COM3", 115200)
+        #self.ser = Serial("COM7", 115200)
         self.start = False
+        #self.read = 0
         self.tab4 = []
         self.tab_assist = []
         self.position = {'A':0, 'B':0, 'C':0, 'D':0}
@@ -16,14 +28,15 @@ class OsciloscopeInterface:
         self.time_on_div = 5
         self.voltage_coeff = 2.5
         self.range = 0
-        self.x = linspace(0, self.time_on_div*5, 100)
+        self.x = linspace(0, self.time_on_div*25, 100)
         self.y0 = [0*val for val in self.x]
         self.y1 = [0*val for val in self.x]
         self.y2 = [0*val for val in self.x]
         self.y3 = [0*val for val in self.x]
         self.dec : int
+        
 
-        self.live = False
+        self.live = True
         plt.ion()
         self.fig, self.axs = plt.subplots(4)
         for i in self.axs:
@@ -44,16 +57,10 @@ class OsciloscopeInterface:
         self.SetLimitsY()
         self.Plot()
 
-        self.fig.canvas.draw()
-        self.fig.canvas.flush_events()
-
         self.START = Button(self.button1, 'START',color="yellow")
         self.TIME = Slider(self.slider1, 'STOP',2, 10, valinit=10,valstep=1,color="red")
         self.RANGE = RadioButtons(self.radiobutton1,labels=["RANGE 2.5V","RANGE 5V", "RANGE 10V"])
 
-        self.START.on_clicked(self.Start)
-        self.TIME.on_changed(self.TimeOnDiv)
-        self.RANGE.on_clicked(self.RangeSet)
 
     def Start(self,x):
         #self.ser.write(b'X')
@@ -117,6 +124,13 @@ class OsciloscopeInterface:
     sample_length = 16
 
 AD7606B = OsciloscopeInterface()
+
+AD7606B.START.on_clicked(AD7606B.Start)
+AD7606B.TIME.on_changed(AD7606B.TimeOnDiv)
+AD7606B.RANGE.on_clicked(AD7606B.RangeSet)
+
+#COM7 = UART()
+ser = Serial("COM7", 115200)
 print("dzialam")
 
 while True: 
@@ -124,10 +138,11 @@ while True:
         AD7606B.fig.canvas.draw()
     AD7606B.fig.canvas.flush_events()
     x = 0
-    #if ser.in_waiting:
-    #x = ser.read(1)
-    #print(f'oppening data {x}')
-    if(x == b'W' and not start):
+    #if AD7606B.ser.in_waiting:
+    x = ser.read(1)
+    #sth = COM7.ReadUART()
+    print(f'oppening data {x}')
+    if(x == b'W' and not AD7606B.start):
         start = True
     # elif(start):
     #     x = bytearray(ser.read(8))
@@ -136,7 +151,7 @@ while True:
 
     #     ser.reset_input_buffer()
     #     ser.reset_output_buffer()
-    elif(x and start):
+    elif(x and AD7606B.start):
         print("DANA")
         dec = int.from_bytes(x, "big",signed=False)
         print(dec)
