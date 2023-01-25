@@ -4,7 +4,7 @@
 #define CONVST_ITR	12
 
 void TPM0_Init(void);
-void TPM1_Init(void);
+void TPM1_Init(uint32_t);
 	
 void ClockToggle(void);
 void ClockON(void);
