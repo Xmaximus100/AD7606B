@@ -18,7 +18,7 @@ class UART:
 
 class OsciloscopeInterface:
     def __init__(self):
-        #self.ser = Serial("COM7", 115200)
+        #self.ser = Serial("COM3", 115200)
         self.start = False
         #self.read = 0
         self.tab4 = []
@@ -34,9 +34,8 @@ class OsciloscopeInterface:
         self.y2 = [0*val for val in self.x]
         self.y3 = [0*val for val in self.x]
         self.dec : int
-        
 
-        self.live = True
+        self.live = False
         plt.ion()
         self.fig, self.axs = plt.subplots(4)
         for i in self.axs:
@@ -138,11 +137,10 @@ while True:
         AD7606B.fig.canvas.draw()
     AD7606B.fig.canvas.flush_events()
     x = 0
-    #if AD7606B.ser.in_waiting:
-    x = ser.read(1)
-    #sth = COM7.ReadUART()
-    print(f'oppening data {x}')
-    if(x == b'W' and not AD7606B.start):
+    #if ser.in_waiting:
+    #x = ser.read(1)
+    #print(f'oppening data {x}')
+    if(x == b'W' and not start):
         start = True
     # elif(start):
     #     x = bytearray(ser.read(8))
