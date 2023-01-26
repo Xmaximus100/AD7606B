@@ -14,7 +14,7 @@
 #define RANGE_5V 0x1
 #define RANGE_10V 0x2
 
-uint32_t samples_amount = 100;
+uint32_t samples_amount = 500;
 uint32_t sample_iter = 0;
 char temp_uart;
 uint16_t main_iter = 0;
@@ -48,7 +48,7 @@ int main (void) {
 					CheckUART();
 					uart_flag =0;
 				} */
-				Send_uart(sending_data, 1);// calosc wysylania 64 bitow z baudrate 115k trwa 600us
+				//Send_uart(sending_data, 1);// calosc wysylania 64 bitow z baudrate 115k trwa 600us
 				main_iter=0;
 				main_iter2=0;
 				//PTB->PSOR |= 1<<RANGE;
@@ -63,7 +63,7 @@ int main (void) {
 			{
 				BUSY_DIS();
 				CONVST_OFF();
-				Send_uart(stop_data, 1);
+				//Send_uart(stop_data, 1);
 				sample_iter++;
 			} else if(uart_flag !=0)  
 			{
@@ -167,8 +167,8 @@ void CheckUART() {
 		uart_iter++;
 		if(uart_iter == 3)
 		{
-			//uart_data[0] = uart_data[0]; //DO TESTOW JAK WYSYLAM ASCI
-			//uart_data[1] = uart_data[1];
+			uart_data[0] = uart_data[0] -48; //DO TESTOW JAK WYSYLAM ASCI
+			uart_data[1] = uart_data[1] -48;
 			//adc_config(uart_data[0],uart_data[1]);
 			TPM1_Init((1000/uart_data[1]));
 			range_confg_ALL((uart_data[0]-0x1));

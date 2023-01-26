@@ -7,7 +7,7 @@ from numpy import linspace
 
 class OsciloscopeInterface:
     def __init__(self):
-        self.ser = Serial("COM13", 115200)
+        self.ser = Serial("COM3", 115200)
         self.tab_full = False
         self.start = False
         self.begin = False
@@ -121,6 +121,7 @@ class OsciloscopeInterface:
     sample_length = 16
 
 iter = 0
+w_counter = 0
 AD7606B = OsciloscopeInterface()
 
 #ser = Serial("COM7", 115200)
@@ -131,42 +132,49 @@ while True:
         AD7606B.fig.canvas.draw()
     AD7606B.fig.canvas.flush_events()
 
-    if len(AD7606B.tab_assist) == 100 and AD7606B.tab_full==False:
+    if len(AD7606B.tab_assist) == 1000 and AD7606B.tab_full==False:
         print("TAB FULL")
         AD7606B.tab_full = True
         AD7606B.begin = False
         AD7606B.start = False
 
-    if AD7606B.begin:
-        try:
-            AD7606B.ReadUART()
-            print("Approved")
-        except Exception:
-            AD7606B.start = False
-            AD7606B.begin = False
-            print("Transmission end")
+    elif AD7606B.begin:
+        AD7606B.ReadUART()
+        AD7606B.tab_assist.append(AD7606B.read)
+        print(AD7606B.read)
+        # try:
+        #     AD7606B.ReadUART()
+        #     print(AD7606B.read)
+        # except Exception:
+        #     AD7606B.start = False
+        #     AD7606B.begin = False
+        #     print("Transmission end")
 
     #print(f'oppening data {AD7606B.read}')
-    if(AD7606B.read == b'W' and not AD7606B.start):
-        AD7606B.start = True
-    elif(AD7606B.read and AD7606B.start):
-        AD7606B.tab_assist.append(AD7606B.read)
-        print("DANA")
-        dec = int.from_bytes(AD7606B.read, "big",signed=False)
-        print(dec)
-        AD7606B.tab4[iter].append(dec)
-        if len(AD7606B.tab4[iter])%AD7606B.packages_amount == 0: 
-            print(AD7606B.tab4[iter])
-            AD7606B.tab4.append([])
-            iter += 1
+    # if(AD7606B.read == b'W' and not AD7606B.start):
+    #     AD7606B.start = True
+    # elif(AD7606B.read and AD7606B.start):
+    #     AD7606B.tab_assist.append(AD7606B.read)
+    #     if len(AD7606B.tab_assist)%AD7606B.packages_amount == 0:
+    #         AD7606B.start = False
+        
     elif(AD7606B.tab_full):
+        print(f'W_COUNTER: {w_counter}\tLEN_TAB_ASSIST:{len(AD7606B.tab_assist)}')
+        for i in range(len(AD7606B.tab_assist)):
+            dec = int.from_bytes(AD7606B.tab_assist[i], "big",signed=False)
+            AD7606B.tab4[iter].append(dec)
+            if len(AD7606B.tab4[iter])%AD7606B.packages_amount == 0: 
+                AD7606B.start = False
+                AD7606B.tab4.append([])
+                iter += 1
         print("OK")
         print(AD7606B.tab4)
         for i in range(len(AD7606B.tab4)):
-            if not len(AD7606B.tab4[i])%AD7606B.packages_amount:
+            if len(AD7606B.tab4[i])%AD7606B.packages_amount or len(AD7606B.tab4[i]) == 0:
                 del(AD7606B.tab4[i])
-        for package in range(len(AD7606B.tab_assist)%AD7606B.packages_amount):
-            print("UNPACKING")
+        for package in range(len(AD7606B.tab4)):
+            print(f'PACKAGE: {package}')
+            #print(f'DICTIONARY: {AD7606B.dout}')
             for key in AD7606B.dout:
                 AD7606B.dout[key].append(0)
             for k in range(AD7606B.packages_amount):
@@ -176,25 +184,27 @@ while True:
                             AD7606B.dout['A'][package] += ((AD7606B.tab4[package][k]>>(AD7606B.byte_length-n-1))&0x01)<<(int(AD7606B.byte_length*2-AD7606B.position['A']-1))
                             AD7606B.position['A'] += 1
                         else:
-                            AD7606B.dout['B'][package] += ((AD7606B.tab4[package][k]>>(AD7606B.byte_length-n-1))&0x01)<<int(AD7606B.byte_length*2-AD7606B.position['B']-1)
-                            AD7606B.position['B'] += 1
+                            AD7606B.dout['C'][package] += ((AD7606B.tab4[package][k]>>(AD7606B.byte_length-n-1))&0x01)<<int(AD7606B.byte_length*2-AD7606B.position['C']-1)
+                            AD7606B.position['C'] += 1
                 else:
                     for n in range(AD7606B.byte_length):
                         if n%2==0:
-                            AD7606B.dout['C'][package] += ((AD7606B.tab4[package][k]>>(AD7606B.byte_length-n-1))&0x01)<<int(AD7606B.byte_length*2-AD7606B.position['C']-1)
-                            AD7606B.position['C'] += 1
+                            AD7606B.dout['B'][package] += ((AD7606B.tab4[package][k]>>(AD7606B.byte_length-n-1))&0x01)<<int(AD7606B.byte_length*2-AD7606B.position['B']-1)
+                            AD7606B.position['B'] += 1
                         else: 
                             AD7606B.dout['D'][package] += ((AD7606B.tab4[package][k]>>(AD7606B.byte_length-n-1))&0x01)<<int(AD7606B.byte_length*2-AD7606B.position['D']-1)
                             AD7606B.position['D'] += 1
             for key in AD7606B.position:
+                print(f'KEY:{key}\tAD7606B.dout[key][package]')
                 AD7606B.position[key] = 0
 
-            print(f'TAB ASSIST: {AD7606B.tab_assist}\tTAB4: {AD7606B.tab4}')
+            # print(f'TAB ASSIST: {AD7606B.tab_assist}\tTAB4: {AD7606B.tab4}')
             
             for key in AD7606B.dout:
                 print(f'before unpack:{AD7606B.dout[key][package]}')
+                if AD7606B.dout[key][package] < 0: AD7606B.dout[key][package] = 0
                 AD7606B.dout[key][package] = struct.unpack('h', struct.pack('H',int(AD7606B.dout[key][package])))[0]
-                print(AD7606B.dout[key])
+                #print(AD7606B.dout[key])
                 AD7606B.dout[key][package] = round(AD7606B.dout[key][package]/(2**(AD7606B.sample_length))*AD7606B.voltage_coeff,6)
 
             AD7606B.y0 = AD7606B.y0[1::]
@@ -210,12 +220,16 @@ while True:
                 AD7606B.line2.set_ydata(AD7606B.y1)
                 AD7606B.line3.set_ydata(AD7606B.y2)
                 AD7606B.line4.set_ydata(AD7606B.y3)
-            print(AD7606B.y0,AD7606B.y1,AD7606B.y2,AD7606B.y3)
-            AD7606B.start = False
-            print("OK2")
-            AD7606B.tab_full = False 
-            AD7606B.tab4 = [[]]
-            iter = 0
-            #ser.flush()
-            AD7606B.ser.reset_input_buffer()
-            AD7606B.ser.reset_output_buffer()
+                AD7606B.fig.canvas.draw()
+                AD7606B.fig.canvas.flush_events()
+            #print(AD7606B.y0,AD7606B.y1,AD7606B.y2,AD7606B.y3)
+        AD7606B.start = False
+        AD7606B.begin = False
+        print("OK2")
+        AD7606B.tab_full = False 
+        AD7606B.tab4 = [[]]
+        AD7606B.tab_assist.clear()
+        iter = 0
+        #ser.flush()
+        AD7606B.ser.reset_input_buffer()
+        AD7606B.ser.reset_output_buffer()
