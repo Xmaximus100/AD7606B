@@ -14,7 +14,7 @@
 #define RANGE_5V 0x1
 #define RANGE_10V 0x2
 
-uint32_t samples_amount = 500;
+uint32_t samples_amount = 30;
 uint32_t sample_iter = 0;
 char temp_uart;
 uint16_t main_iter = 0;
@@ -33,7 +33,7 @@ void Send_uart(char data[], uint32_t size);
 void range_confg(uint8_t,uint8_t,uint8_t,uint8_t);
 void delay(void);
 
-char sending_data[]= "W";
+char sending_data[]= "DZIALA";
 char stop_data[] = "S";
 
 int main (void) { 
@@ -48,11 +48,11 @@ int main (void) {
 					CheckUART();
 					uart_flag =0;
 				} */
-				//Send_uart(sending_data, 1);// calosc wysylania 64 bitow z baudrate 115k trwa 600us
+				Send_uart(sending_data, 6);// calosc wysylania 64 bitow z baudrate 115k trwa 600us
 				main_iter=0;
 				main_iter2=0;
 				//PTB->PSOR |= 1<<RANGE;
-				Send_uart(unionR.bytes, 8);
+				//Send_uart(unionR.bytes, 8);
 				//PTB->PCOR |= 1<<RANGE;
 				unionR.word64.word1 = 0;
 				unionR.word64.word2 = 0;
@@ -171,7 +171,7 @@ void CheckUART() {
 			uart_data[1] = uart_data[1] -48;
 			//adc_config(uart_data[0],uart_data[1]);
 			TPM1_Init((1000/uart_data[1]));
-			range_confg_ALL((uart_data[0]-0x1));
+			range_confg_ALL((uart_data[0])-0x1);
 			uart_iter=0;
 			sample_iter = 0;
 		}

@@ -7,7 +7,7 @@ from numpy import linspace
 
 class OsciloscopeInterface:
     def __init__(self):
-        self.ser = Serial("COM3", 115200)
+        self.ser = Serial("COM13", 115200)
         self.tab_full = False
         self.start = False
         self.begin = False
@@ -132,7 +132,7 @@ while True:
         AD7606B.fig.canvas.draw()
     AD7606B.fig.canvas.flush_events()
 
-    if len(AD7606B.tab_assist) == 1000 and AD7606B.tab_full==False:
+    if len(AD7606B.tab_assist) == 75 and AD7606B.tab_full==False:
         print("TAB FULL")
         AD7606B.tab_full = True
         AD7606B.begin = False
