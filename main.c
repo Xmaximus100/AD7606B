@@ -14,7 +14,7 @@
 #define RANGE_5V 0x1
 #define RANGE_10V 0x2
 
-uint32_t samples_amount = 500;
+uint32_t samples_amount = 100;
 uint32_t sample_iter = 0;
 char temp_uart;
 uint16_t main_iter = 0;
