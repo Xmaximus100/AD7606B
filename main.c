@@ -35,12 +35,37 @@ void delay(void);
 
 char sending_data[]= "W";
 char stop_data[] = "S";
+int16_t sin_vals[10] = {
+    0, 4881, 9511, 14136, 18204, 18038, 14136, 9511, 4881, 0
+};
+int16_t test1 = 32767; 
+int16_t test2 = -32768;
+int16_t test3 = 0;
+int16_t test4 = 16400;
+data_ex2 data_preparation(int16_t A, int16_t B, int16_t C, int16_t D)
+{
+	data_ex2 output;
+	output.word64.word1 =0;
+	output.word64.word2 =0;
+
+	for (int i = 0;i < 16; i++ )
+	{ 
+		output.word64.word1 |= (A&(0x8000>>i))>>(15-i)<<((2*(15-i))+1);
+		output.word64.word1 |= (B&(0x8000>>i))>>(15-i)<<((2*(15-i)));
+		output.word64.word2 |= (C&(0x8000>>i))>>(15-i)<<((2*(15-i))+1);
+		output.word64.word2 |= (D&(0x8000>>i))>>(15-i)<<((2*(15-i)));
+	}
+	return output;
+}
+
 
 int main (void) { 
 	CommunicationSetup();
 	delay();
 	//Send_uart(hello_word, 5);
 	while(1) {
+				//unionR = data_preparation(0xffff,test3,0x0,0xffff);
+				//Send_uart(unionR.bytes, 8);
 		if (sample_iter < (samples_amount)){
 			if (main_iter2>16){	 
 				/*
@@ -51,6 +76,9 @@ int main (void) {
 				//Send_uart(sending_data, 1);// calosc wysylania 64 bitow z baudrate 115k trwa 600us
 				main_iter=0;
 				main_iter2=0;
+				unionR.word64.word1 = 0;
+				unionR.word64.word2 = 0;
+				unionR = data_preparation(test1,test3,test2,test4);
 				//PTB->PSOR |= 1<<RANGE;
 				Send_uart(unionR.bytes, 8);
 				//PTB->PCOR |= 1<<RANGE;
@@ -199,6 +227,7 @@ void PORTB_IRQHandler(){
 	PORTB->PCR[BUSY] &= ~PORT_PCR_ISF_SHIFT;
 	NVIC_EnableIRQ(PORTB_IRQn);
 }
+
 
 void TPM0_IRQHandler() {
 	if(!(PTB->PDIR & 0x01)){ //sprawdzenie czy zbocze jest narastajace 

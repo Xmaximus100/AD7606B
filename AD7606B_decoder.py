@@ -7,7 +7,7 @@ import numpy as np
 
 class OsciloscopeInterface:
     def __init__(self):
-        self.ser = Serial("COM3", 115200)
+        self.ser = Serial("COM13", 115200)
         self.tab_full = False
         self.start = False
         self.begin = False
@@ -167,7 +167,7 @@ while True:
     #         AD7606B.start = False
         
     elif(AD7606B.tab_full):
-        # AD7606B.tab_assist = [63,255,255,255]*2*100
+        AD7606B.tab_assist = [128,0,0,0]*2*100
         #AD7606B.tab4 = np.array(AD7606B.tab_assist).reshape(-1,AD7606B.packages_amount)
         print(AD7606B.tab_assist)
         AC, BD = np.split(np.array(AD7606B.tab_assist).reshape(-1,AD7606B.packages_amount), 2, axis=1)
