@@ -76,9 +76,9 @@ int main (void) {
 				//Send_uart(sending_data, 1);// calosc wysylania 64 bitow z baudrate 115k trwa 600us
 				main_iter=0;
 				main_iter2=0;
-				unionR.word64.word1 = 0;
-				unionR.word64.word2 = 0;
-				unionR = data_preparation(test1,test3,test2,test4);
+				//unionR.word64.word1 = 0;
+				//unionR.word64.word2 = 0;
+				//unionR = data_preparation(test1,test3,test2,test4);
 				//PTB->PSOR |= 1<<RANGE;
 				Send_uart(unionR.bytes, 8);
 				//PTB->PCOR |= 1<<RANGE;
@@ -108,7 +108,7 @@ void Send_uart(char data[], uint32_t size)
 	
 		for(uint8_t i=0;i<size;i++) {
 		while(!(UART0->S1 & UART0_S1_TDRE_MASK));
-		UART0->D = data[i];
+		UART0->D = data[size-1-i];
 		}	
 }
 /*
@@ -234,11 +234,14 @@ void TPM0_IRQHandler() {
 		//Ta funckja wykonuje sie ok 1,5us TO WAZNE!!!!
 		//PTB->PSOR |= 1<<RANGE;
 		if (main_iter!=16) {
-			unionR.word64.word1 |= (((PTA->PDIR & 0x0300)>>(8)) << (main_iter*2));
+			unionR.word64.word1 |= (((PTA->PDIR & 0x0200)>>(9)) << (15-main_iter));
+			unionR.word64.word1 |= (((PTA->PDIR & 0x0100)>>(8)) << (31-main_iter));
 			main_iter++;
 		}
 		else {
-			unionR.word64.word2 |= (((PTA->PDIR & 0x0300)>>(8)) << (main_iter2*2));
+			//unionR.word64.word2 |= (((PTA->PDIR & 0x0300)>>(8)) << (main_iter2*2));
+			unionR.word64.word2 |= (((PTA->PDIR & 0x0200)>>(9)) << (15-main_iter2));
+			unionR.word64.word2 |= (((PTA->PDIR & 0x0100)>>(8)) << (31-main_iter2));
 			main_iter2++;
 			if(main_iter2>16) {
 				ClockOFF(); CS_Off(); BUSY_DIS();
