@@ -717,16 +717,16 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       628         72          0          0          0      11280   ad7606b.o
-       874         94          0         64          0      96427   main.o
-       216         40          0          0          0       1630   spi.o
-        68         38        192          0        256        880   startup_mkl05z4.o
-        92         14          0          0          0        485   system_mkl05z4.o
-       624         78          0          8          0       3174   tpm.o
-       360         32          0          0          0       1337   uart0.o
+       628         72          0          0          0      11204   ad7606b.o
+       874         94          0         64          0      96239   main.o
+       216         40          0          0          0       1574   spi.o
+        68         38        192          0        256        852   startup_mkl05z4.o
+        92         14          0          0          0        473   system_mkl05z4.o
+       624         78          0          8          0       3094   tpm.o
+       360         32          0          0          0       1317   uart0.o
 
     ----------------------------------------------------------------------
-      2876        380        224         72        256     115213   Object Totals
+      2876        380        224         72        256     114753   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         14         12          0          0          0          0   (incl. Padding)
 
@@ -776,8 +776,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      3496        396        224         72        352     114345   Grand Totals
-      3496        396        224         72        352     114345   ELF Image Totals
+      3496        396        224         72        352     113885   Grand Totals
+      3496        396        224         72        352     113885   ELF Image Totals
       3496        396        224         72          0          0   ROM Totals
 
 ==============================================================================
