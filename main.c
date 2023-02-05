@@ -195,8 +195,8 @@ void CheckUART() {
 		uart_iter++;
 		if(uart_iter == 3)
 		{
-			uart_data[0] = uart_data[0] -48; //DO TESTOW JAK WYSYLAM ASCI
-			uart_data[1] = uart_data[1] -48;
+			uart_data[0] = uart_data[0] - 48; //DO TESTOW JAK WYSYLAM ASCI
+			uart_data[1] = uart_data[1] - 48;
 			//adc_config(uart_data[0],uart_data[1]);
 			TPM1_Init((1000/uart_data[1]));
 			range_confg_ALL((uart_data[0]-0x1));
